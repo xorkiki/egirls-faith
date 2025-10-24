@@ -1,8 +1,11 @@
 import React from 'react';
 import './Photos.css';
+import NotesModal from '../components/NotesModal';
+import StripeModal from '../components/StripeModal';
+import StripeUSModal from '../components/StripeUSModal';
 
-// Draggable Folder Component
-const DraggableFolder = ({ name, initialX, initialY, onOpen }) => {
+// Draggable Icon Component
+const DraggableIcon = ({ name, initialX, initialY, onOpen, iconSrc }) => {
   const [position, setPosition] = React.useState({ x: initialX, y: initialY });
   const [isDragging, setIsDragging] = React.useState(false);
   const [dragStart, setDragStart] = React.useState({ x: 0, y: 0 });
@@ -111,7 +114,7 @@ const DraggableFolder = ({ name, initialX, initialY, onOpen }) => {
 
   return (
     <div
-      className="draggable-folder"
+      className="draggable-icon"
       style={{
         position: 'absolute',
         left: position.x,
@@ -124,13 +127,16 @@ const DraggableFolder = ({ name, initialX, initialY, onOpen }) => {
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      <img src="/macOSfolder.png" alt="folder" className="folder-icon" />
-      <span className="folder-name">{name}</span>
+      <img src={iconSrc} alt="icon" className="icon-image" />
+      <span className="icon-name">{name}</span>
     </div>
   );
 };
 
-const Photos = ({ onClose, onNavigateToWineNight, onNavigateToTattoos }) => {
+const Photos = ({ onClose }) => {
+  const [showNotesModal, setShowNotesModal] = React.useState(false);
+  const [showStripeModal, setShowStripeModal] = React.useState(false);
+  const [showStripeUSModal, setShowStripeUSModal] = React.useState(false);
   // Add ESC key functionality to close the page
   React.useEffect(() => {
     const handleKeyDown = (e) => {
@@ -229,18 +235,20 @@ const Photos = ({ onClose, onNavigateToWineNight, onNavigateToTattoos }) => {
   };
 
   // Use state to store positions and update them when viewport changes
-  const [folderPositions, setFolderPositions] = React.useState(() => {
-    // Set default positions first to ensure folders are visible
+  const [iconPositions, setIconPositions] = React.useState(() => {
+    // Set default positions first to ensure icons are visible
     const defaultPositions = {
-      wineNight: { x: 100, y: 100 },
-      tattoos: { x: 300, y: 100 }
+      mailClubAbout: { x: 100, y: 100 },
+      mailClubSubscribe: { x: 300, y: 100 },
+      mailClubSubscribeIntl: { x: 500, y: 100 }
     };
     
     // Then try to get random positions
     try {
       return {
-        wineNight: getRandomCenteredPosition(0), // Left side
-        tattoos: getRandomCenteredPosition(1)    // Right side
+        mailClubAbout: getRandomCenteredPosition(0), // Left side
+        mailClubSubscribe: getRandomCenteredPosition(1), // Center
+        mailClubSubscribeIntl: getRandomCenteredPosition(2) // Right side
       };
     } catch (error) {
       console.error('Error getting random positions, using defaults:', error);
@@ -256,27 +264,33 @@ const Photos = ({ onClose, onNavigateToWineNight, onNavigateToTattoos }) => {
       const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 667;
       console.log('Viewport dimensions:', { viewportWidth, viewportHeight });
       
-                      const newPositions = {
-                  wineNight: getRandomCenteredPosition(0), // Left side
-                  tattoos: getRandomCenteredPosition(1)    // Right side
-                };
+      const newPositions = {
+        mailClubAbout: getRandomCenteredPosition(0), // Left side
+        mailClubSubscribe: getRandomCenteredPosition(1), // Center
+        mailClubSubscribeIntl: getRandomCenteredPosition(2) // Right side
+      };
       
       // Validate positions are within bounds
       const headerHeight = 44;
       const footerHeight = 80;
       const availableHeight = viewportHeight - headerHeight - footerHeight;
       
-      if (newPositions.wineNight.x < 0 || newPositions.wineNight.x > viewportWidth - 100 ||
-          newPositions.wineNight.y < 60 || newPositions.wineNight.y > viewportHeight - 180) {
-        newPositions.wineNight = getFallbackPosition(0);
+      if (newPositions.mailClubAbout.x < 0 || newPositions.mailClubAbout.x > viewportWidth - 100 ||
+          newPositions.mailClubAbout.y < 60 || newPositions.mailClubAbout.y > viewportHeight - 180) {
+        newPositions.mailClubAbout = getFallbackPosition(0);
       }
       
-      if (newPositions.tattoos.x < 0 || newPositions.tattoos.x > viewportWidth - 100 ||
-          newPositions.tattoos.y < 60 || newPositions.tattoos.y > viewportHeight - 180) {
-        newPositions.tattoos = getFallbackPosition(1);
+      if (newPositions.mailClubSubscribe.x < 0 || newPositions.mailClubSubscribe.x > viewportWidth - 100 ||
+          newPositions.mailClubSubscribe.y < 60 || newPositions.mailClubSubscribe.y > viewportHeight - 180) {
+        newPositions.mailClubSubscribe = getFallbackPosition(1);
       }
       
-      setFolderPositions(newPositions);
+      if (newPositions.mailClubSubscribeIntl.x < 0 || newPositions.mailClubSubscribeIntl.x > viewportWidth - 100 ||
+          newPositions.mailClubSubscribeIntl.y < 60 || newPositions.mailClubSubscribeIntl.y > viewportHeight - 180) {
+        newPositions.mailClubSubscribeIntl = getFallbackPosition(2);
+      }
+      
+      setIconPositions(newPositions);
     };
 
     // Debounce resize events
@@ -306,20 +320,29 @@ const Photos = ({ onClose, onNavigateToWineNight, onNavigateToTattoos }) => {
           <div className="terminal-button minimize"></div>
           <div className="terminal-button maximize"></div>
         </div>
-        <div className="terminal-title">photos</div>
+        <div className="terminal-title">mail club</div>
       </div>
       <div className="photos-content">
-        <DraggableFolder 
-          name="wine night" 
-          initialX={folderPositions.wineNight.x} 
-          initialY={folderPositions.wineNight.y} 
-          onOpen={onNavigateToWineNight} 
+        <DraggableIcon 
+          name="mail club about" 
+          initialX={iconPositions.mailClubAbout.x} 
+          initialY={iconPositions.mailClubAbout.y} 
+          onOpen={() => setShowNotesModal(true)}
+          iconSrc="/icons/note-icon.png"
         />
-        <DraggableFolder 
-          name="tattoos" 
-          initialX={folderPositions.tattoos.x} 
-          initialY={folderPositions.tattoos.y} 
-          onOpen={onNavigateToTattoos} 
+        <DraggableIcon 
+          name="sign up for monthly mailer (USA)" 
+          initialX={iconPositions.mailClubSubscribe.x} 
+          initialY={iconPositions.mailClubSubscribe.y} 
+          onOpen={() => setShowStripeUSModal(true)}
+          iconSrc="/icons/macOSfolder.png"
+        />
+        <DraggableIcon 
+          name="sign up for monthly mailer (International)" 
+          initialX={iconPositions.mailClubSubscribeIntl.x} 
+          initialY={iconPositions.mailClubSubscribeIntl.y} 
+          onOpen={() => setShowStripeModal(true)}
+          iconSrc="/icons/macOSfolder.png"
         />
       </div>
       <div className="photos-footer">
@@ -327,6 +350,15 @@ const Photos = ({ onClose, onNavigateToWineNight, onNavigateToTattoos }) => {
           <img src="/egirl_logo.svg" alt="egirls logo" />
         </div>
       </div>
+      {showNotesModal && (
+        <NotesModal onClose={() => setShowNotesModal(false)} />
+      )}
+      {showStripeModal && (
+        <StripeModal onClose={() => setShowStripeModal(false)} />
+      )}
+      {showStripeUSModal && (
+        <StripeUSModal onClose={() => setShowStripeUSModal(false)} />
+      )}
     </div>
   );
 };

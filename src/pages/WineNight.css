@@ -87,14 +87,14 @@
 
 .wine-night-thanks {
   text-align: center;
-  padding: 20px;
+  padding: 40px 20px;
   color: #fff;
-  font-size: 16px;
+  font-size: 24px;
   line-height: 1.5;
   position: absolute;
-  top: 80px;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
   z-index: 100;
   background: rgba(0, 0, 0, 0.8);
   border-radius: 8px;
@@ -145,54 +145,6 @@
   filter: brightness(0) invert(1);
 }
 
-/* Photo Timeline Styles - Updated with correct positioning */
-.photo-timeline-container {
-  width: 100%;
-  height: 100vh; /* Full viewport height - footer will overlay */
-  background-color: #000;
-  overflow: hidden;
-  position: relative;
-  user-select: none; /* Prevent text selection during drag */
-  touch-action: pan-x; /* Allow horizontal touch scrolling */
-  -webkit-user-select: none; /* Safari support */
-  -webkit-touch-callout: none; /* Disable callout on long press */
-  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-  overscroll-behavior: none; /* Prevent overscroll bounce */
-  scroll-behavior: auto; /* Disable smooth scrolling */
-}
-
-.photo-timeline {
-  position: relative;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  touch-action: pan-x; /* Allow horizontal touch scrolling */
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  user-select: none;
-}
-
-.photo-item {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform-origin: center center;
-  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.photo-item img {
-  width: 300px;
-  height: 400px;
-  object-fit: cover;
-  border-radius: 8px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
-  pointer-events: none;
-}
 
 /* Terminal Button Styles */
 .terminal-buttons {
@@ -256,19 +208,9 @@
   
   /* Wine Night mobile improvements */
   .wine-night-thanks {
-    top: 60px; /* Move text up to avoid photo overlap */
-    font-size: 14px; /* Smaller font for mobile */
-    padding: 15px;
+    font-size: 18px; /* Smaller font for mobile */
+    padding: 30px 15px;
     max-width: 85%;
-  }
-  
-  .photo-item img {
-    width: 150px; /* 25% smaller photos on mobile */
-    height: 200px;
-  }
-  
-  .photo-timeline-container {
-    height: calc(100vh - 120px); /* Reduce height to make room for text */
   }
 
   /* Terminal button mobile styles */
@@ -310,18 +252,8 @@
   }
   
   .wine-night-thanks {
-    top: 50px; /* Move text up to avoid photo overlap */
-    font-size: 13px; /* Even smaller font */
-    padding: 12px;
+    font-size: 16px; /* Even smaller font */
+    padding: 20px 12px;
     max-width: 80%;
-  }
-  
-  .photo-item img {
-    width: 120px; /* 25% smaller photos on very small screens */
-    height: 160px;
-  }
-  
-  .photo-timeline-container {
-    height: calc(100vh - 140px); /* Further reduce height */
   }
 }

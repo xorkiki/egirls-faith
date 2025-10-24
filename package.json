@@ -1,13 +1,13 @@
 {
-  "name": "egirls-website",
+  "name": "egirls-faith-website",
   "version": "1.0.0",
   "private": true,
   "dependencies": {
     "framer-motion": "^12.23.12",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^7.8.2",
-    "react-scripts": "5.0.1"
+    "react-router-dom": "^7.0.2",
+    "react-scripts": "^5.0.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -43,7 +43,7 @@
   "devDependencies": {
     "imagemin": "^7.0.1",
     "imagemin-mozjpeg": "^8.0.0",
-    "imagemin-pngquant": "^8.0.0",
+    "imagemin-pngquant": "^9.0.0",
     "imagemin-webp": "^5.1.0"
   }
 }

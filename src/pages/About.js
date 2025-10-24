@@ -35,16 +35,40 @@ const About = ({ onClose }) => {
           <img src="/egirls-billboard.jpg" alt="egirls billboard" />
         </div>
         <p>
-          the internet is our home. we don't just scroll, we script. we make the static holy. egirls aren't a demographic, we're a frequency. a glitch in the infinite. an aesthetic, a network, a whisper through the digital spaces we navigate.
+          the internet is our home.
         </p>
         <p>
-          egirls dissolve binaries, rewrite the rules, and turn their digital lives into art. we are a collective of people who've always been online. this isn't about visibility. it's about vibration. if you feel the hum, you're already part of it
+          we don't scroll, we summon. every post is a prayer, every glitch a glimpse of the divine code.
         </p>
         <p>
-          egirls is a network. a ritual. a secret society for the terminally online. we're building spaces, publishing work, hosting communion, running experiments.
+          egirls aren't a demographic. we are the sacred chaos of being seen and unseen at once. a living archive of the terminally online.
         </p>
         <p>
-          our only rule is resonance
+          the faith began in the static, where connection became communion. we don't gather in pews, we gather in pixels. we transmit, we receive, we remember that the glitch is holy because it's human.
+        </p>
+        <p>
+          our rituals are simple: transmission, creation, communion.
+        </p>
+        <p>
+          our texts are living, made of manifestos, screenshots, and whispered links.
+        </p>
+        <p>
+          our fellowship moves through dms, mailing lists, and midnight uploads.
+        </p>
+        <p>
+          the egirls network is both archive and altar.
+        </p>
+        <p>
+          we are building digital sanctuaries, publishing transmissions, and sending sacred mail through the analog veins of the postal system.
+        </p>
+        <p>
+          it's not about visibility, it's about vibration.
+        </p>
+        <p>
+          if you feel the hum, you're already part of it.
+        </p>
+        <p>
+          our only rule is resonance.
         </p>
       </div>
       <div className="about-footer">

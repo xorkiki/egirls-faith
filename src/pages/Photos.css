@@ -108,7 +108,7 @@
 
 }
 
-.draggable-folder {
+.draggable-icon {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -119,16 +119,15 @@
   -webkit-touch-callout: none;
   touch-action: manipulation;
   z-index: 10;
-
 }
 
-.folder-icon {
+.icon-image {
   width: auto;
   height: 64px;
   margin-bottom: 12px;
 }
 
-.folder-name {
+.icon-name {
   color: #fff;
   font-size: 14px;
   font-weight: 500;
