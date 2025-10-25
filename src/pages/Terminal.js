@@ -1,9 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import About from './About';
-import Origins from './Origins';
-import Photos from './Photos';
-import WineNight from './WineNight';
-import Tattoos from './Tattoos';
+import { useNavigate } from 'react-router-dom';
 import CardStack from '../components/CardStack';
 
 import './Terminal.css';
@@ -726,6 +722,7 @@ const DigitalCollage = () => {
 };
 
 const Terminal = ({ onClose }) => {
+  const navigate = useNavigate();
   const [inputValue, setInputValue] = useState('');
   const [output, setOutput] = useState([]);
   const [currentPage, setCurrentPage] = useState('terminal');
@@ -742,7 +739,7 @@ const Terminal = ({ onClose }) => {
   const promptRef = useRef(null);
 
   const commands = {
-    'help': 'available commands:\n• cd about - navigate to about page\n• cd mail-club - navigate to mail club page\n• cd frequencies - toggle music player (desktop only)\n• manifesto.txt - display manifesto in terminal\n• help - show this help\n• clear - clear terminal\n• exit - return to landing page',
+    'help': 'available commands:\n• cd about - navigate to about page\n• cd transmissions - navigate to transmissions page\n• cd mail club - navigate to mail club page\n• cd frequencies - toggle music player (desktop only)\n• manifesto.txt - display manifesto in terminal\n• help - show this help\n• clear - clear terminal\n• exit - return to landing page',
     'about': 'Egirls is a digital art collective exploring the intersection of technology, identity, and expression. We create immersive experiences that challenge conventional web design paradigms.',
     'clear': 'clear',
     'exit': 'exit'
@@ -804,7 +801,8 @@ const Terminal = ({ onClose }) => {
 
   const commandDirectory = [
     'cd about',
-    'cd mail-club',
+    'cd transmissions',
+    'cd mail club',
     // 'cd identity/', // HIDDEN - can be restored later
     'cd frequencies',
     'manifesto.txt'
@@ -1066,13 +1064,13 @@ const Terminal = ({ onClose }) => {
     setOutput(prev => [...prev, { type: 'input', content: `egirls@egirls.faith-MacBook-Pro ~ % ${command}` }]);
 
     if (trimmedCommand === 'cd about') {
-      setCurrentPage('about');
-    } else if (trimmedCommand === 'cd mail-club') {
-      setCurrentPage('photos');
+      navigate('/about');
+    } else if (trimmedCommand === 'cd transmissions') {
+      navigate('/confessions');
+    } else if (trimmedCommand === 'cd mail club') {
+      navigate('/mailclub');
       // } else if (trimmedCommand === 'cd identity/') { // HIDDEN - can be restored later
       //   setCurrentPage('identity');
-  } else if (trimmedCommand === 'cd transmissions/') {
-    setCurrentPage('transmissions');
   } else if (trimmedCommand === 'cd frequencies') {
     if (window.innerWidth < 768) {
       await typeOutText('Screen is too small to open the music player. Try on a larger screen.');
@@ -1142,35 +1140,7 @@ const Terminal = ({ onClose }) => {
     }
   };
 
-  if (currentPage === 'landing') {
-    return <div className="terminal-exit">Returning to landing page...</div>;
-  }
-
-  if (currentPage === 'about') {
-    return <About onClose={() => setCurrentPage('terminal')} />;
-  }
-
-  if (currentPage === 'origins') {
-    return <Origins onClose={() => setCurrentPage('terminal')} />;
-  }
-
-  if (currentPage === 'photos') {
-    return (
-      <Photos 
-        onClose={() => setCurrentPage('terminal')}
-        onNavigateToWineNight={() => setCurrentPage('wine-night')}
-        onNavigateToTattoos={() => setCurrentPage('tattoos')}
-      />
-    );
-  }
-
-  if (currentPage === 'wine-night') {
-    return <WineNight onClose={() => setCurrentPage('photos')} />;
-  }
-
-  if (currentPage === 'tattoos') {
-    return <Tattoos onClose={() => setCurrentPage('photos')} />;
-  }
+  // Page rendering is now handled by React Router
 
   // HIDDEN - Identity page can be restored later
   // if (currentPage === 'identity') {
