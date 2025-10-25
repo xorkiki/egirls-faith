@@ -73,9 +73,7 @@ const About = ({ onClose }) => {
       </div>
       <div className="about-footer">
         <div className="about-logo">
-          {window.innerWidth >= 412 && (
-            <img src="/egirl_logo.svg" alt="egirls logo" />
-          )}
+          <img src="/egirl_logo.svg" alt="egirls logo" />
         </div>
       </div>
     </div>

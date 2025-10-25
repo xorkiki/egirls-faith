@@ -745,6 +745,12 @@ const Terminal = ({ onClose }) => {
     'exit': 'exit'
   };
 
+  // Mobile-specific commands (no frequencies, no explanatory text)
+  const mobileCommands = {
+    'about': 'Egirls is a digital art collective exploring the intersection of technology, identity, and expression. We create immersive experiences that challenge conventional web design paradigms.',
+    'clear': 'clear'
+  };
+
   const manifestos = [
     'the internet is my home.',
     'i wander its infinite corners, seeking meaning, finding bliss in unexpected places.',
@@ -924,22 +930,16 @@ const Terminal = ({ onClose }) => {
     await handleCommand(command);
   };
 
-  // Auto-start typing sequence for mobile devices
+  // Initialize mobile content immediately on mount
   useEffect(() => {
-    if (isMobile && !hasAutoStarted && currentPage === 'terminal') {
-      setHasAutoStarted(true);
-      
-      // Start auto-typing sequence after a short delay
-      const startAutoTyping = async () => {
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second after page load
-        
-        // Auto-type and execute 'help' command
-        await autoTypeAndExecute('help');
-      };
-      
-      startAutoTyping();
+    if (isMobile && currentPage === 'terminal') {
+      // Preload mobile content immediately without any delay
+      setOutput([
+        { type: 'output', content: 'available commands:\n• cd about\n• cd transmissions\n• cd mail club\n• manifesto.txt\n• clear' }
+      ]);
+      setCurrentPage('help');
     }
-  }, [isMobile, hasAutoStarted, currentPage]);
+  }, [isMobile, currentPage]);
 
   useEffect(() => {
     // Measure prompt width for cursor positioning
@@ -1082,10 +1082,17 @@ const Terminal = ({ onClose }) => {
       setShowMusicPlayer(false);
       await typeOutText(manifestos.join('\n'));
     } else if (trimmedCommand === 'ls') {
-      await typeOutText('about/\norigins/\nphotos/\ntransmissions/\nfrequencies/\nmanifesto.txt');
+      const lsOutput = isMobile 
+        ? 'about/\ntransmissions/\nmail club/\nmanifesto.txt'
+        : 'about/\norigins/\nphotos/\ntransmissions/\nfrequencies/\nmanifesto.txt';
+      await typeOutText(lsOutput);
     } else if (trimmedCommand === 'help') {
       setCurrentPage('help');
-      await typeOutText(commands.help);
+      if (isMobile) {
+        await typeOutText('available commands:\n• cd about\n• cd transmissions\n• cd mail club\n• manifesto.txt\n• clear');
+      } else {
+        await typeOutText(commands.help);
+      }
     } else if (trimmedCommand === 'clear') {
       setOutput([
         { type: 'system', content: 'Last login: Tue Nov 11 11:11:11 on console' }

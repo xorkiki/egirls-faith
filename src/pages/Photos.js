@@ -1,8 +1,7 @@
 import React from 'react';
 import './Photos.css';
 import NotesModal from '../components/NotesModal';
-import StripeModal from '../components/StripeModal';
-import StripeUSModal from '../components/StripeUSModal';
+import MobileNotesPage from '../components/MobileNotesPage';
 
 // Draggable Icon Component
 const DraggableIcon = ({ name, initialX, initialY, onOpen, iconSrc }) => {
@@ -135,8 +134,23 @@ const DraggableIcon = ({ name, initialX, initialY, onOpen, iconSrc }) => {
 
 const Photos = ({ onClose }) => {
   const [showNotesModal, setShowNotesModal] = React.useState(false);
-  const [showStripeModal, setShowStripeModal] = React.useState(false);
-  const [showStripeUSModal, setShowStripeUSModal] = React.useState(false);
+  const [showMobileNotes, setShowMobileNotes] = React.useState(false);
+  const [isMobile, setIsMobile] = React.useState(false);
+
+  // Mobile detection
+  React.useEffect(() => {
+    const checkMobile = () => {
+      const isMobileDevice = window.innerWidth <= 768;
+      console.log('Mobile detection:', isMobileDevice, 'Width:', window.innerWidth);
+      setIsMobile(isMobileDevice);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   // Add ESC key functionality to close the page
   React.useEffect(() => {
     const handleKeyDown = (e) => {
@@ -240,6 +254,25 @@ const Photos = ({ onClose }) => {
     return distance < minDistance;
   };
 
+  // Helper function to generate mobile-specific positions (centered vertically, evenly spaced)
+  const generateMobilePosition = (index, viewportWidth, viewportHeight, headerHeight, footerHeight) => {
+    const iconWidth = 80;
+    const iconHeight = 100;
+    const totalIcons = 4;
+    
+    // Center the icons vertically in the available space
+    const availableHeight = viewportHeight - headerHeight - footerHeight;
+    const startY = headerHeight + (availableHeight - (totalIcons * 120)) / 2; // 120px spacing between icons
+    
+    // Center horizontally
+    const centerX = (viewportWidth - iconWidth) / 2;
+    
+    return {
+      x: centerX,
+      y: startY + (index * 120) // 120px spacing between icons
+    };
+  };
+
   // Helper function to generate random position that doesn't overlap with existing positions
   const generateNonOverlappingPosition = (existingPositions, viewportWidth, viewportHeight, headerHeight, footerHeight) => {
     const maxAttempts = 50;
@@ -279,14 +312,23 @@ const Photos = ({ onClose }) => {
     const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 800;
     const headerHeight = 44;
     const footerHeight = 80;
+    const isMobileDevice = viewportWidth <= 768;
     
     const positions = [];
     const iconNames = ['mailClubAbout', 'mailClubSubscribe', 'mailClubSubscribeIntl', 'mailClubManage'];
     
-    // Generate non-overlapping positions for each icon
-    for (const iconName of iconNames) {
-      const position = generateNonOverlappingPosition(positions, viewportWidth, viewportHeight, headerHeight, footerHeight);
-      positions.push(position);
+    if (isMobileDevice) {
+      // Use mobile-specific positioning (centered, evenly spaced)
+      for (let i = 0; i < iconNames.length; i++) {
+        const position = generateMobilePosition(i, viewportWidth, viewportHeight, headerHeight, footerHeight);
+        positions.push(position);
+      }
+    } else {
+      // Generate non-overlapping positions for each icon (desktop)
+      for (const iconName of iconNames) {
+        const position = generateNonOverlappingPosition(positions, viewportWidth, viewportHeight, headerHeight, footerHeight);
+        positions.push(position);
+      }
     }
     
     return {
@@ -303,19 +345,27 @@ const Photos = ({ onClose }) => {
       // Debug: Log viewport dimensions
       const viewportWidth = window.innerWidth || document.documentElement.clientWidth || 375;
       const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 667;
-      console.log('Viewport dimensions:', { viewportWidth, viewportHeight });
+      const isMobileDevice = viewportWidth <= 768;
+      console.log('Viewport dimensions:', { viewportWidth, viewportHeight, isMobileDevice });
       
-      // Use random positioning with collision detection
       const headerHeight = 44;
       const footerHeight = 80;
       
       const positions = [];
       const iconNames = ['mailClubAbout', 'mailClubSubscribe', 'mailClubSubscribeIntl', 'mailClubManage'];
       
-      // Generate non-overlapping positions for each icon
-      for (const iconName of iconNames) {
-        const position = generateNonOverlappingPosition(positions, viewportWidth, viewportHeight, headerHeight, footerHeight);
-        positions.push(position);
+      if (isMobileDevice) {
+        // Use mobile-specific positioning (centered, evenly spaced)
+        for (let i = 0; i < iconNames.length; i++) {
+          const position = generateMobilePosition(i, viewportWidth, viewportHeight, headerHeight, footerHeight);
+          positions.push(position);
+        }
+      } else {
+        // Generate non-overlapping positions for each icon (desktop)
+        for (const iconName of iconNames) {
+          const position = generateNonOverlappingPosition(positions, viewportWidth, viewportHeight, headerHeight, footerHeight);
+          positions.push(position);
+        }
       }
       
       const newPositions = {
@@ -362,21 +412,28 @@ const Photos = ({ onClose }) => {
           name="about" 
           initialX={iconPositions.mailClubAbout.x} 
           initialY={iconPositions.mailClubAbout.y} 
-          onOpen={() => setShowNotesModal(true)}
+          onOpen={() => {
+            console.log('About icon clicked, isMobile:', isMobile);
+            if (isMobile) {
+              setShowMobileNotes(true);
+            } else {
+              setShowNotesModal(true);
+            }
+          }}
           iconSrc="/icons/note-icon.png"
         />
         <DraggableIcon 
           name="join monthly mail (USA)" 
           initialX={iconPositions.mailClubSubscribe.x} 
           initialY={iconPositions.mailClubSubscribe.y} 
-          onOpen={() => setShowStripeUSModal(true)}
+          onOpen={() => window.open('https://buy.stripe.com/fZu6oH0ug5Nidw7bkpgYU02', '_blank')}
           iconSrc="/icons/mail-icon.png"
         />
         <DraggableIcon 
           name="join monthly mail (intl.)" 
           initialX={iconPositions.mailClubSubscribeIntl.x} 
           initialY={iconPositions.mailClubSubscribeIntl.y} 
-          onOpen={() => setShowStripeModal(true)}
+          onOpen={() => window.open('https://buy.stripe.com/5kQ14n90Mb7C0Jl1JPgYU01', '_blank')}
           iconSrc="/icons/mail-icon.png"
         />
         <DraggableIcon 
@@ -392,14 +449,11 @@ const Photos = ({ onClose }) => {
           <img src="/egirl_logo.svg" alt="egirls logo" />
         </div>
       </div>
+      {showMobileNotes && (
+        <MobileNotesPage onClose={() => setShowMobileNotes(false)} />
+      )}
       {showNotesModal && (
         <NotesModal onClose={() => setShowNotesModal(false)} />
-      )}
-      {showStripeModal && (
-        <StripeModal onClose={() => setShowStripeModal(false)} />
-      )}
-      {showStripeUSModal && (
-        <StripeUSModal onClose={() => setShowStripeUSModal(false)} />
       )}
     </div>
   );
