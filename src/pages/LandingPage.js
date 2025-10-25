@@ -1,11 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
-import Terminal from './Terminal';
+import React, { useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './LandingPage.css';
 
 const LandingPage = () => {
   const backgroundRef = useRef(null);
   const fadeRef = useRef(null);
-  const [showTerminal, setShowTerminal] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -23,25 +23,15 @@ const LandingPage = () => {
         fadeRef.current.style.opacity = fadeProgress;
       }
 
-      // Show terminal when scroll reaches a certain point
+      // Navigate to terminal when scroll reaches a certain point
       if (scrollTop >= window.innerHeight * 0.8) {
-        setShowTerminal(true);
+        navigate('/terminal');
       }
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const handleReturnFromTerminal = () => {
-    setShowTerminal(false);
-    // Reset scroll position to top
-    window.scrollTo(0, 0);
-  };
-
-  if (showTerminal) {
-    return <Terminal onClose={handleReturnFromTerminal} />;
-  }
+  }, [navigate]);
 
   return (
     <div className="landing-page">

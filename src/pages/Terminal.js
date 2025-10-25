@@ -1096,8 +1096,8 @@ const Terminal = ({ onClose }) => {
         }
       }, 100);
     } else if (trimmedCommand === 'exit') {
-      setCurrentPage('landing');
       await typeOutText('Returning to landing page...');
+      navigate('/');
     } else if (trimmedCommand !== '') {
       await typeOutText(`Command not found: ${command}. Type 'help' for available commands.`);
     }
