@@ -122,9 +122,33 @@
 }
 
 .icon-image {
-  width: auto;
-  height: 64px;
+  width: 64px !important;
+  height: 64px !important;
   margin-bottom: 12px;
+  object-fit: cover;
+  max-width: 64px;
+  max-height: 64px;
+  min-width: 64px;
+  min-height: 64px;
+}
+
+/* Specific icon sizes */
+.icon-image[src*="mail-icon.png"] {
+  width: 61px !important;
+  height: 61px !important;
+  max-width: 61px;
+  max-height: 61px;
+  min-width: 61px;
+  min-height: 61px;
+}
+
+.icon-image[src*="setting-icon.png"] {
+  width: 66px !important;
+  height: 66px !important;
+  max-width: 66px;
+  max-height: 66px;
+  min-width: 66px;
+  min-height: 66px;
 }
 
 .icon-name {

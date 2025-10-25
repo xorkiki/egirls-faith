@@ -234,26 +234,67 @@ const Photos = ({ onClose }) => {
     };
   };
 
+  // Helper function to check if two positions overlap
+  const checkOverlap = (pos1, pos2, minDistance = 120) => {
+    const distance = Math.sqrt(Math.pow(pos1.x - pos2.x, 2) + Math.pow(pos1.y - pos2.y, 2));
+    return distance < minDistance;
+  };
+
+  // Helper function to generate random position that doesn't overlap with existing positions
+  const generateNonOverlappingPosition = (existingPositions, viewportWidth, viewportHeight, headerHeight, footerHeight) => {
+    const maxAttempts = 50;
+    const iconWidth = 80;
+    const iconHeight = 100;
+    const minDistance = 120;
+    
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      const x = Math.max(20, Math.random() * (viewportWidth - iconWidth - 20));
+      const y = Math.max(headerHeight + 20, Math.random() * (viewportHeight - footerHeight - iconHeight - 20));
+      
+      const newPos = { x, y };
+      let hasOverlap = false;
+      
+      for (const existingPos of existingPositions) {
+        if (checkOverlap(newPos, existingPos, minDistance)) {
+          hasOverlap = true;
+          break;
+        }
+      }
+      
+      if (!hasOverlap) {
+        return newPos;
+      }
+    }
+    
+    // Fallback: return a position that might overlap but is at least visible
+    return {
+      x: Math.max(20, Math.random() * (viewportWidth - iconWidth - 20)),
+      y: Math.max(headerHeight + 20, Math.random() * (viewportHeight - footerHeight - iconHeight - 20))
+    };
+  };
+
   // Use state to store positions and update them when viewport changes
   const [iconPositions, setIconPositions] = React.useState(() => {
-    // Set default positions first to ensure icons are visible
-    const defaultPositions = {
-      mailClubAbout: { x: 100, y: 100 },
-      mailClubSubscribe: { x: 300, y: 100 },
-      mailClubSubscribeIntl: { x: 500, y: 100 }
-    };
+    const viewportWidth = window.innerWidth || document.documentElement.clientWidth || 1200;
+    const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 800;
+    const headerHeight = 44;
+    const footerHeight = 80;
     
-    // Then try to get random positions
-    try {
-      return {
-        mailClubAbout: getRandomCenteredPosition(0), // Left side
-        mailClubSubscribe: getRandomCenteredPosition(1), // Center
-        mailClubSubscribeIntl: getRandomCenteredPosition(2) // Right side
-      };
-    } catch (error) {
-      console.error('Error getting random positions, using defaults:', error);
-      return defaultPositions;
+    const positions = [];
+    const iconNames = ['mailClubAbout', 'mailClubSubscribe', 'mailClubSubscribeIntl', 'mailClubManage'];
+    
+    // Generate non-overlapping positions for each icon
+    for (const iconName of iconNames) {
+      const position = generateNonOverlappingPosition(positions, viewportWidth, viewportHeight, headerHeight, footerHeight);
+      positions.push(position);
     }
+    
+    return {
+      mailClubAbout: positions[0],
+      mailClubSubscribe: positions[1],
+      mailClubSubscribeIntl: positions[2],
+      mailClubManage: positions[3]
+    };
   });
 
   // Update positions when viewport changes (orientation change, resize, etc.)
@@ -264,31 +305,25 @@ const Photos = ({ onClose }) => {
       const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 667;
       console.log('Viewport dimensions:', { viewportWidth, viewportHeight });
       
-      const newPositions = {
-        mailClubAbout: getRandomCenteredPosition(0), // Left side
-        mailClubSubscribe: getRandomCenteredPosition(1), // Center
-        mailClubSubscribeIntl: getRandomCenteredPosition(2) // Right side
-      };
-      
-      // Validate positions are within bounds
+      // Use random positioning with collision detection
       const headerHeight = 44;
       const footerHeight = 80;
-      const availableHeight = viewportHeight - headerHeight - footerHeight;
       
-      if (newPositions.mailClubAbout.x < 0 || newPositions.mailClubAbout.x > viewportWidth - 100 ||
-          newPositions.mailClubAbout.y < 60 || newPositions.mailClubAbout.y > viewportHeight - 180) {
-        newPositions.mailClubAbout = getFallbackPosition(0);
+      const positions = [];
+      const iconNames = ['mailClubAbout', 'mailClubSubscribe', 'mailClubSubscribeIntl', 'mailClubManage'];
+      
+      // Generate non-overlapping positions for each icon
+      for (const iconName of iconNames) {
+        const position = generateNonOverlappingPosition(positions, viewportWidth, viewportHeight, headerHeight, footerHeight);
+        positions.push(position);
       }
       
-      if (newPositions.mailClubSubscribe.x < 0 || newPositions.mailClubSubscribe.x > viewportWidth - 100 ||
-          newPositions.mailClubSubscribe.y < 60 || newPositions.mailClubSubscribe.y > viewportHeight - 180) {
-        newPositions.mailClubSubscribe = getFallbackPosition(1);
-      }
-      
-      if (newPositions.mailClubSubscribeIntl.x < 0 || newPositions.mailClubSubscribeIntl.x > viewportWidth - 100 ||
-          newPositions.mailClubSubscribeIntl.y < 60 || newPositions.mailClubSubscribeIntl.y > viewportHeight - 180) {
-        newPositions.mailClubSubscribeIntl = getFallbackPosition(2);
-      }
+      const newPositions = {
+        mailClubAbout: positions[0],
+        mailClubSubscribe: positions[1],
+        mailClubSubscribeIntl: positions[2],
+        mailClubManage: positions[3]
+      };
       
       setIconPositions(newPositions);
     };
@@ -324,25 +359,32 @@ const Photos = ({ onClose }) => {
       </div>
       <div className="photos-content">
         <DraggableIcon 
-          name="mail club about" 
+          name="about" 
           initialX={iconPositions.mailClubAbout.x} 
           initialY={iconPositions.mailClubAbout.y} 
           onOpen={() => setShowNotesModal(true)}
           iconSrc="/icons/note-icon.png"
         />
         <DraggableIcon 
-          name="sign up for monthly mailer (USA)" 
+          name="join monthly mail (USA)" 
           initialX={iconPositions.mailClubSubscribe.x} 
           initialY={iconPositions.mailClubSubscribe.y} 
           onOpen={() => setShowStripeUSModal(true)}
-          iconSrc="/icons/macOSfolder.png"
+          iconSrc="/icons/mail-icon.png"
         />
         <DraggableIcon 
-          name="sign up for monthly mailer (International)" 
+          name="join monthly mail (intl.)" 
           initialX={iconPositions.mailClubSubscribeIntl.x} 
           initialY={iconPositions.mailClubSubscribeIntl.y} 
           onOpen={() => setShowStripeModal(true)}
-          iconSrc="/icons/macOSfolder.png"
+          iconSrc="/icons/mail-icon.png"
+        />
+        <DraggableIcon 
+          name="manage subscription" 
+          initialX={iconPositions.mailClubManage.x} 
+          initialY={iconPositions.mailClubManage.y} 
+          onOpen={() => window.open('https://billing.stripe.com/p/login/5kQcN5dh25NigIjaglgYU00', '_blank')}
+          iconSrc="/icons/setting-icon.png"
         />
       </div>
       <div className="photos-footer">
