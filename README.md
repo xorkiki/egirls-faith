@@ -100,3 +100,4 @@ The `/scripts` directory contains utility scripts for:
 
 The build process creates an optimized production bundle in the `/build` directory, ready for deployment to any static hosting service.
 
+# Reverted to working state
