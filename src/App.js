@@ -15,7 +15,7 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/terminal" element={<Terminal onClose={() => window.location.href = '/'} />} />
           <Route path="/about" element={<About onClose={() => window.location.href = '/terminal'} />} />
-          <Route path="/confessions" element={<Transmissions onClose={() => window.location.href = '/terminal'} />} />
+          <Route path="/confession" element={<Transmissions onClose={() => window.location.href = '/terminal'} />} />
           <Route path="/mailclub" element={<Photos onClose={() => window.location.href = '/terminal'} />} />
         </Routes>
       </Router>

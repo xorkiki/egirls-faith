@@ -1066,7 +1066,7 @@ const Terminal = ({ onClose }) => {
     if (trimmedCommand === 'cd about') {
       navigate('/about');
     } else if (trimmedCommand === 'cd transmissions') {
-      navigate('/confessions');
+      navigate('/confession');
     } else if (trimmedCommand === 'cd mail club') {
       navigate('/mailclub');
       // } else if (trimmedCommand === 'cd identity/') { // HIDDEN - can be restored later
