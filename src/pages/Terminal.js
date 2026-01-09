@@ -739,7 +739,7 @@ const Terminal = ({ onClose }) => {
   const promptRef = useRef(null);
 
   const commands = {
-    'help': 'available commands:\n• cd about - navigate to about page\n• cd transmissions - navigate to transmissions page\n• cd mail club - navigate to mail club page\n• cd frequencies - toggle music player (desktop only)\n• manifesto.txt - display manifesto in terminal\n• help - show this help\n• clear - clear terminal\n• exit - return to landing page',
+    'help': 'available commands:\n• cd about - navigate to about page\n• cd transmissions - navigate to transmissions page\n• cd join mail club - navigate to join mail club page\n• cd frequencies - toggle music player (desktop only)\n• manifesto.txt - display manifesto in terminal\n• help - show this help\n• clear - clear terminal\n• exit - return to landing page',
     'about': 'Egirls is a digital art collective exploring the intersection of technology, identity, and expression. We create immersive experiences that challenge conventional web design paradigms.',
     'clear': 'clear',
     'exit': 'exit'
@@ -808,7 +808,7 @@ const Terminal = ({ onClose }) => {
   const commandDirectory = [
     'cd about',
     'cd transmissions',
-    'cd mail club',
+    'cd join mail club',
     // 'cd identity/', // HIDDEN - can be restored later
     'cd frequencies',
     'manifesto.txt'
@@ -935,7 +935,7 @@ const Terminal = ({ onClose }) => {
     if (isMobile && currentPage === 'terminal') {
       // Preload mobile content immediately without any delay
       setOutput([
-        { type: 'output', content: 'available commands:\n• cd about\n• cd transmissions\n• cd mail club\n• manifesto.txt\n• clear' }
+        { type: 'output', content: 'available commands:\n• cd about\n• cd transmissions\n• cd join mail club\n• manifesto.txt\n• clear' }
       ]);
       setCurrentPage('help');
     }
@@ -1002,119 +1002,175 @@ const Terminal = ({ onClose }) => {
 
 
   const typeOutText = async (text, speed = 50) => {
-    setIsTyping(true);
-    const lines = text.split('\n');
-    // Start with the current output state to preserve existing content
-    let currentOutput = [...output];
+    try {
+      setIsTyping(true);
+      const lines = text.split('\n');
 
-    // Add the first line to start typing
-    currentOutput.push({ type: 'output', content: '' });
-    setOutput([...currentOutput]);
+      // Add the first line to start typing
+      setOutput(prev => [...prev, { type: 'output', content: '' }]);
 
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i];
-      if (line === '') {
-        currentOutput.push({ type: 'output', content: '' });
-        setOutput([...currentOutput]);
-        await new Promise(resolve => setTimeout(resolve, speed));
-        continue;
-      }
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        if (line === '') {
+          setOutput(prev => [...prev, { type: 'output', content: '' }]);
+          await new Promise(resolve => setTimeout(resolve, speed));
+          continue;
+        }
 
-      let currentLine = '';
-      // Batch character updates to reduce re-renders
-      const batchSize = 3; // Update every 3 characters instead of every character
-      for (let j = 0; j < line.length; j++) {
-        currentLine += line[j];
-        
-        // Only update state every few characters to reduce re-renders
-        if (j % batchSize === 0 || j === line.length - 1) {
-          currentOutput[currentOutput.length - 1] = { type: 'output', content: currentLine, showCursor: true };
-          setOutput([...currentOutput]);
+        let currentLine = '';
+        // Batch character updates to reduce re-renders
+        const batchSize = 3; // Update every 3 characters instead of every character
+        for (let j = 0; j < line.length; j++) {
+          currentLine += line[j];
+          
+          // Only update state every few characters to reduce re-renders
+          if (j % batchSize === 0 || j === line.length - 1) {
+            setOutput(prev => {
+              const newOutput = [...prev];
+              newOutput[newOutput.length - 1] = { type: 'output', content: currentLine, showCursor: true };
+              return newOutput;
+            });
+          }
+          
+          await new Promise(resolve => setTimeout(resolve, speed));
         }
         
-        await new Promise(resolve => setTimeout(resolve, speed));
+        // Remove cursor from the completed line
+        setOutput(prev => {
+          const newOutput = [...prev];
+          newOutput[newOutput.length - 1] = { type: 'output', content: currentLine, showCursor: false };
+          return newOutput;
+        });
+
+        if (i < lines.length - 1) {
+          setOutput(prev => [...prev, { type: 'output', content: '' }]);
+        }
       }
+
+      // Add new prompt
+      const isSmallScreen = window.innerWidth <= 412;
+      const promptText = isSmallScreen 
+        ? 'egirls@egirls.faith ~ % '
+        : 'egirls@egirls.faith-MacBook-Pro ~ % ';
       
-      // Remove cursor from the completed line
-      currentOutput[currentOutput.length - 1] = { type: 'output', content: currentLine, showCursor: false };
-      setOutput([...currentOutput]);
-
-      if (i < lines.length - 1) {
-        currentOutput.push({ type: 'output', content: '' });
-        setOutput([...currentOutput]);
-      }
+      setOutput(prev => [...prev, { type: 'system', content: promptText }]);
+    } catch (error) {
+      console.error('Error in typeOutText:', error);
+    } finally {
+      setIsTyping(false);
     }
-
-    // Add new prompt
-    const isSmallScreen = window.innerWidth <= 412;
-    const promptText = isSmallScreen 
-      ? 'egirls@egirls.faith ~ % '
-      : 'egirls@egirls.faith-MacBook-Pro ~ % ';
-    
-    currentOutput.push({ type: 'system', content: promptText });
-    setOutput([...currentOutput]);
-    setIsTyping(false);
   };
 
 
   const handleCommand = async (command) => {
-    const trimmedCommand = command.trim();
+    try {
+      const trimmedCommand = command.trim();
+      console.log('handleCommand called with:', trimmedCommand);
 
-    // Add command to output
-    setOutput(prev => [...prev, { type: 'input', content: `egirls@egirls.faith-MacBook-Pro ~ % ${command}` }]);
-
-    if (trimmedCommand === 'cd about') {
-      navigate('/about');
-    } else if (trimmedCommand === 'cd transmissions') {
-      navigate('/confession');
-    } else if (trimmedCommand === 'cd mail club') {
-      navigate('/mailclub');
-      // } else if (trimmedCommand === 'cd identity/') { // HIDDEN - can be restored later
-      //   setCurrentPage('identity');
-  } else if (trimmedCommand === 'cd frequencies') {
-    if (window.innerWidth < 768) {
-      await typeOutText('Screen is too small to open the music player. Try on a larger screen.');
-    } else {
-      setShowMusicPlayer(!showMusicPlayer);
-    }
-  } else if (trimmedCommand === 'manifesto.txt') {
-      // Close music player when manifesto starts typing
-      setShowMusicPlayer(false);
-      await typeOutText(manifestos.join('\n'));
-    } else if (trimmedCommand === 'ls') {
-      const lsOutput = isMobile 
-        ? 'about/\ntransmissions/\nmail club/\nmanifesto.txt'
-        : 'about/\norigins/\nphotos/\ntransmissions/\nfrequencies/\nmanifesto.txt';
-      await typeOutText(lsOutput);
-    } else if (trimmedCommand === 'help') {
-      setCurrentPage('help');
-      if (isMobile) {
-        await typeOutText('available commands:\n• cd about\n• cd transmissions\n• cd mail club\n• manifesto.txt\n• clear');
-      } else {
-        await typeOutText(commands.help);
+      // Reset isTyping for navigation commands to ensure they work
+      if (trimmedCommand === 'cd about' || trimmedCommand === 'cd transmissions' || 
+          trimmedCommand === 'cd mail club' || trimmedCommand === 'cd join mail club') {
+        setIsTyping(false);
       }
-    } else if (trimmedCommand === 'clear') {
-      setOutput([
-        { type: 'system', content: 'Last login: Tue Nov 11 11:11:11 on console' }
-      ]);
-      setTimeout(() => {
-        if (inputRef.current) {
-          inputRef.current.focus();
-        }
-      }, 100);
-    } else if (trimmedCommand === 'exit') {
-      await typeOutText('Returning to landing page...');
-      navigate('/');
-    } else if (trimmedCommand !== '') {
-      await typeOutText(`Command not found: ${command}. Type 'help' for available commands.`);
-    }
 
-    setInputValue('');
+      // Add command to output
+      setOutput(prev => [...prev, { type: 'input', content: `egirls@egirls.faith-MacBook-Pro ~ % ${command}` }]);
+
+      if (trimmedCommand === 'cd about') {
+        console.log('Navigating to /about');
+        setInputValue('');
+        try {
+          navigate('/about');
+        } catch (err) {
+          console.error('Navigation error, using window.location:', err);
+          window.location.href = '/about';
+        }
+        return;
+      } else if (trimmedCommand === 'cd transmissions') {
+        console.log('Navigating to /confession');
+        setInputValue('');
+        try {
+          navigate('/confession');
+        } catch (err) {
+          console.error('Navigation error, using window.location:', err);
+          window.location.href = '/confession';
+        }
+        return;
+      } else if (trimmedCommand === 'cd mail club' || trimmedCommand === 'cd join mail club') {
+        console.log('Navigating to /mailclub');
+        setInputValue('');
+        try {
+          navigate('/mailclub');
+        } catch (err) {
+          console.error('Navigation error, using window.location:', err);
+          window.location.href = '/mailclub';
+        }
+        return;
+        // } else if (trimmedCommand === 'cd identity/') { // HIDDEN - can be restored later
+        //   setCurrentPage('identity');
+      } else if (trimmedCommand === 'cd frequencies') {
+        console.log('cd frequencies command');
+        if (window.innerWidth < 768) {
+          await typeOutText('Screen is too small to open the music player. Try on a larger screen.');
+        } else {
+          console.log('Toggling music player');
+          setShowMusicPlayer(!showMusicPlayer);
+        }
+      } else if (trimmedCommand === 'manifesto.txt') {
+        console.log('manifesto.txt command');
+        // Close music player when manifesto starts typing
+        setShowMusicPlayer(false);
+        await typeOutText(manifestos.join('\n'), 25);
+      } else if (trimmedCommand === 'ls') {
+        const lsOutput = isMobile 
+          ? 'about/\ntransmissions/\njoin mail club/\nmanifesto.txt'
+          : 'about/\norigins/\nphotos/\ntransmissions/\nfrequencies/\nmanifesto.txt';
+        await typeOutText(lsOutput);
+      } else if (trimmedCommand === 'help') {
+        setCurrentPage('help');
+        if (isMobile) {
+          await typeOutText('available commands:\n• cd about\n• cd transmissions\n• cd join mail club\n• manifesto.txt\n• clear');
+        } else {
+          await typeOutText(commands.help);
+        }
+      } else if (trimmedCommand === 'clear') {
+        setOutput([
+          { type: 'system', content: 'Last login: Tue Nov 11 11:11:11 on console' }
+        ]);
+        setTimeout(() => {
+          if (inputRef.current) {
+            inputRef.current.focus();
+          }
+        }, 100);
+      } else if (trimmedCommand === 'exit') {
+        await typeOutText('Returning to landing page...');
+        navigate('/');
+      } else if (trimmedCommand !== '') {
+        await typeOutText(`Command not found: ${command}. Type 'help' for available commands.`);
+      }
+
+      setInputValue('');
+    } catch (error) {
+      console.error('Error executing command:', error);
+      setInputValue('');
+      setIsTyping(false);
+      await typeOutText(`Error: ${error.message}`);
+    }
   };
 
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && !isTyping) {
-      handleCommand(inputValue);
+    if (e.key === 'Enter') {
+      const trimmed = inputValue.trim();
+      // Allow navigation commands even if typing is in progress
+      const isNavigationCommand = trimmed === 'cd about' || trimmed === 'cd transmissions' || 
+                                  trimmed === 'cd mail club' || trimmed === 'cd join mail club';
+      
+      if (!isTyping || isNavigationCommand) {
+        console.log('Executing command:', inputValue);
+        handleCommand(inputValue);
+      } else {
+        console.log('Command blocked - isTyping is true');
+      }
     }
   };
 
@@ -1407,7 +1463,21 @@ const Terminal = ({ onClose }) => {
               type="text"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              onKeyPress={handleKeyPress}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  const trimmed = inputValue.trim();
+                  const isNavigationCommand = trimmed === 'cd about' || trimmed === 'cd transmissions' || 
+                                              trimmed === 'cd mail club' || trimmed === 'cd join mail club';
+                  
+                  if (!isTyping || isNavigationCommand) {
+                    console.log('Executing command:', inputValue);
+                    handleCommand(inputValue);
+                  } else {
+                    console.log('Command blocked - isTyping is true');
+                  }
+                }
+              }}
               className="terminal-input"
               placeholder=""
               disabled={isTyping}

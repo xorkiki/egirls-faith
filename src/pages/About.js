@@ -1,7 +1,10 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './About.css';
 
 const About = ({ onClose }) => {
+  const navigate = useNavigate();
+
   // Add ESC key functionality to close the page
   React.useEffect(() => {
     const handleKeyDown = (e) => {
@@ -17,6 +20,11 @@ const About = ({ onClose }) => {
       document.removeEventListener('keydown', handleKeyDown, true);
     };
   }, [onClose]);
+
+  const handleJoinNetwork = (e) => {
+    e.preventDefault();
+    navigate('/mailclub');
+  };
 
   return (
     <div className="about-page">
@@ -34,41 +42,36 @@ const About = ({ onClose }) => {
         <div className="about-banner">
           <img src="/egirls-billboard.jpg" alt="egirls billboard" />
         </div>
+        <h1 className="about-headline">A NEW MEDIA EXPERIMENT FOR THE TERMINALLY ONLINE.</h1>
+        
+        <h2 className="about-section-title">what is egirls?</h2>
         <p>
-          the internet is our home.
+          egirls is a living archive and a bridge between worlds. we are an experimental publication exploring the sacred chaos of existence in the digital age. we are a network for the messy. the raw. and the glitch-prone.
         </p>
         <p>
-          we don't scroll, we summon. every post is a prayer, every glitch a glimpse of the divine code.
+          we believe the internet is real but it should not stay behind glass. we are here to close the gap between the url and the irl.
+        </p>
+
+        <h2 className="about-section-title">the transmission (monthly editions)</h2>
+        <p>
+          we do not just scroll. we summon. every month we release a physical edition. a curated drop of analog artifacts sent through the veins of the postal system directly to your door.
         </p>
         <p>
-          egirls aren't a demographic. we are the sacred chaos of being seen and unseen at once. a living archive of the terminally online.
+          these are not just monthly letter publications. they are time capsules of the current moment. inside you will find essays on digital philosophy. reflections on being a woman in the digital age. visual manifestos. and art that embodies what it means to be a messy human in a polished algorithmic world.
         </p>
         <p>
-          the faith began in the static, where connection became communion. we don't gather in pews, we gather in pixels. we transmit, we receive, we remember that the glitch is holy because it's human.
+          from the revival of smudgecore to the spirituality of the server room. we document the culture as it happens.
+        </p>
+
+        <h2 className="about-section-title">the philosophy</h2>
+        <p>
+          we are entering the era of the error. perfection is dead. the clean girl was a cage. egirls is the key to the breakout. we celebrate the beauty of the breakdown. the smeared makeup. the chaotic existence. the unfiltered feed.
         </p>
         <p>
-          our rituals are simple: transmission, creation, communion.
+          we are building a sanctuary for those who feel the hum of the electric current within. a place where you can be chaotic. tender. and real.
         </p>
         <p>
-          our texts are living, made of manifestos, screenshots, and whispered links.
-        </p>
-        <p>
-          our fellowship moves through dms, mailing lists, and midnight uploads.
-        </p>
-        <p>
-          the egirls network is both archive and altar.
-        </p>
-        <p>
-          we are building digital sanctuaries, publishing transmissions, and sending sacred mail through the analog veins of the postal system.
-        </p>
-        <p>
-          it's not about visibility, it's about vibration.
-        </p>
-        <p>
-          if you feel the hum, you're already part of it.
-        </p>
-        <p>
-          our only rule is resonance.
+          <a href="/mailclub" onClick={handleJoinNetwork} className="about-link">join the network</a>. subscribe to the transmission. receive the sacrament. be the glitch.
         </p>
       </div>
       <div className="about-footer">
