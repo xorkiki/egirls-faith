@@ -33,13 +33,15 @@ const MobileNotesPage = ({ onClose }) => {
       time: '4:44 PM',
       date: 'October 11, 2025 at 4:44 PM',
       shortDate: '10/11/2025',
-      preview: 'the mail club is our analog ritual.',
+      preview: 'the internet is fleeting. the mail is forever.',
       content: (
         <div className="mobile-note-text">
-          <p>the mail club is our analog ritual.</p>
-          <p>each envelope carries a transmission, a relic, a fragment of the collective dream.</p>
-          <p>a reminder that the internet can bleed into real life, that connection doesn't end at the screen.</p>
-          <p>sent monthly, sealed with intention, addressed to those who listen for the hum.</p>
+          <p>the internet is fleeting. the mail is forever.</p>
+          <p>this is our analog ritual. a way to drag the digital into the physical.</p>
+          <p>every month. a sealed envelope arrives at your door. inside is a curated drop of analog artifacts. essays. visual manifestos. and erratic art that documents the chaos of being alive online.</p>
+          <p>we pull the rawest parts of the feed and send them through the veins of the postal system directly to you.</p>
+          <p>it is a time capsule of the now. a sanctuary you can touch.</p>
+          <p>hold the glitch in your hands.</p>
         </div>
       )
     },
@@ -48,15 +50,14 @@ const MobileNotesPage = ({ onClose }) => {
       time: '5:55 PM',
       date: 'October 11, 2025 at 5:55 PM',
       shortDate: '10/11/2025',
-      preview: 'when you subscribe, you\'ll be charged monthly and receive a new mailer every month until you cancel.',
+      preview: 'the protocol when you subscribe. you enter the cycle.',
       content: (
         <div className="mobile-note-text">
-          <p>when you subscribe, you'll be charged monthly and receive a new mailer every month until you cancel. you can cancel or update your plan anytime on the manage subscription page.</p>
-          <p>everything ships out on the 11th of each month.</p>
-          <p>if you sign up before the 1st, you'll get the next month's mailer.</p>
-          <p>if you sign up after the 1st, your first mailer will arrive the following month.</p>
-          <p>timing depends on where you live and how the post office is feeling, so delivery might vary a bit. each one travels at its own pace.</p>
-          <p>once subscribed, you'll stay on our list until you choose to pause or stop. as long as you're subscribed, a new piece of mail will find its way to you each month.</p>
+          <p><strong>the protocol</strong> when you subscribe. you enter the cycle. you will be charged monthly and receive a new artifact every month until you choose to disconnect. you can cancel or update your plan anytime in the portal.</p>
+          <p><strong>the timeline</strong> everything ships at the end of each month.</p>
+          <p>if you sign up before the 15th. you secure this month's drop. if you sign up after the 15th. your first transmission will arrive the following month.</p>
+          <p>the delivery timing depends on where you live and the mood of the post office. delivery varies. each one travels at its own analog pace.</p>
+          <p>once subscribed. a new piece of mail will find its way to you each month. untracked. but always on the way.</p>
         </div>
       )
     },
@@ -65,10 +66,10 @@ const MobileNotesPage = ({ onClose }) => {
       time: '1:11 AM',
       date: 'October 11, 2025 at 1:11 AM',
       shortDate: '10/11/2025',
-      preview: 'for lost mail, divine guidance, or general confusion, contact ritualsupport@egirls.faith.',
+      preview: 'for lost transmissions or general system errors contact ritualsupport@egirls.faith.',
       content: (
         <div className="mobile-note-text">
-          <p>for lost mail, divine guidance, or general confusion, contact ritualsupport@egirls.faith.</p>
+          <p>for lost transmissions or general system errors contact ritualsupport@egirls.faith.</p>
         </div>
       )
     }
