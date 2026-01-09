@@ -46,10 +46,10 @@ const About = ({ onClose }) => {
         
         <h2 className="about-section-title">what is egirls?</h2>
         <p>
-          egirls is a living archive and a bridge between worlds. we are an experimental publication exploring the sacred chaos of existence in the digital age. we are a network for the messy. the raw. and the glitch-prone.
+          egirls is an experimental publication exploring the chaos of existence in the digital age.
         </p>
         <p>
-          we believe the internet is real but it should not stay behind glass. we are here to close the gap between the url and the irl.
+          we believe the internet is real but it should not stay behind glass. we are here to close the gap between the url and the irl. we are a living archive and a bridge between worlds. we are a network for the messy. the raw. and the glitch-prone.
         </p>
 
         <h2 className="about-section-title">the transmission (monthly editions)</h2>
@@ -57,7 +57,7 @@ const About = ({ onClose }) => {
           we do not just scroll. we summon. every month we release a physical edition. a curated drop of analog artifacts sent through the veins of the postal system directly to your door.
         </p>
         <p>
-          these are not just monthly letter publications. they are time capsules of the current moment. inside you will find essays on digital philosophy. reflections on being a woman in the digital age. visual manifestos. and art that embodies what it means to be a messy human in a polished algorithmic world.
+          these are not monthly letter publications. they are time capsules of the current moment. inside you will find essays on digital philosophy. reflections on being a woman in the digital age. visual manifestos. and art that embodies what it means to be a messy human in a polished algorithmic world.
         </p>
         <p>
           from the revival of smudgecore to the spirituality of the server room. we document the culture as it happens.

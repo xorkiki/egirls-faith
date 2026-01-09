@@ -5,6 +5,7 @@ import Terminal from './pages/Terminal';
 import About from './pages/About';
 import Transmissions from './pages/Transmissions';
 import Photos from './pages/Photos';
+import PaperTrail from './pages/PaperTrail';
 import './App.css';
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
           <Route path="/about" element={<About onClose={() => window.location.href = '/terminal'} />} />
           <Route path="/confession" element={<Transmissions onClose={() => window.location.href = '/terminal'} />} />
           <Route path="/mailclub" element={<Photos onClose={() => window.location.href = '/terminal'} />} />
+          <Route path="/papertrail" element={<PaperTrail onClose={() => window.location.href = '/terminal'} />} />
         </Routes>
       </Router>
     </div>

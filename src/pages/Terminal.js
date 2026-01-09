@@ -739,7 +739,7 @@ const Terminal = ({ onClose }) => {
   const promptRef = useRef(null);
 
   const commands = {
-    'help': 'available commands:\n• cd about - navigate to about page\n• cd transmissions - navigate to transmissions page\n• cd join mail club - navigate to join mail club page\n• cd frequencies - toggle music player (desktop only)\n• manifesto.txt - display manifesto in terminal\n• help - show this help\n• clear - clear terminal\n• exit - return to landing page',
+    'help': 'available commands:\n• cd about - navigate to about page\n• cd transmissions - navigate to transmissions page\n• cd join mail club - navigate to join mail club page\n• cd paper trail - navigate to paper trail page\n• cd frequencies - toggle music player (desktop only)\n• manifesto.txt - display manifesto in terminal\n• help - show this help\n• clear - clear terminal\n• exit - return to landing page',
     'about': 'Egirls is a digital art collective exploring the intersection of technology, identity, and expression. We create immersive experiences that challenge conventional web design paradigms.',
     'clear': 'clear',
     'exit': 'exit'
@@ -809,6 +809,7 @@ const Terminal = ({ onClose }) => {
     'cd about',
     'cd transmissions',
     'cd join mail club',
+    'cd paper trail',
     // 'cd identity/', // HIDDEN - can be restored later
     'cd frequencies',
     'manifesto.txt'
@@ -829,6 +830,7 @@ const Terminal = ({ onClose }) => {
           case 'about':
           case 'origins':
           case 'photos':
+          case 'paper-trail':
           // case 'identity': // HIDDEN - can be restored later
           //   break;
           case 'transmissions':
@@ -935,7 +937,7 @@ const Terminal = ({ onClose }) => {
     if (isMobile && currentPage === 'terminal') {
       // Preload mobile content immediately without any delay
       setOutput([
-        { type: 'output', content: 'available commands:\n• cd about\n• cd transmissions\n• cd join mail club\n• manifesto.txt\n• clear' }
+        { type: 'output', content: 'available commands:\n• cd about\n• cd transmissions\n• cd join mail club\n• cd paper trail\n• manifesto.txt\n• clear' }
       ]);
       setCurrentPage('help');
     }
@@ -1069,7 +1071,8 @@ const Terminal = ({ onClose }) => {
 
       // Reset isTyping for navigation commands to ensure they work
       if (trimmedCommand === 'cd about' || trimmedCommand === 'cd transmissions' || 
-          trimmedCommand === 'cd mail club' || trimmedCommand === 'cd join mail club') {
+          trimmedCommand === 'cd mail club' || trimmedCommand === 'cd join mail club' ||
+          trimmedCommand === 'cd paper trail') {
         setIsTyping(false);
       }
 
@@ -1106,6 +1109,16 @@ const Terminal = ({ onClose }) => {
           window.location.href = '/mailclub';
         }
         return;
+      } else if (trimmedCommand === 'cd paper trail') {
+        console.log('Navigating to /papertrail');
+        setInputValue('');
+        try {
+          navigate('/papertrail');
+        } catch (err) {
+          console.error('Navigation error, using window.location:', err);
+          window.location.href = '/papertrail';
+        }
+        return;
         // } else if (trimmedCommand === 'cd identity/') { // HIDDEN - can be restored later
         //   setCurrentPage('identity');
       } else if (trimmedCommand === 'cd frequencies') {
@@ -1123,13 +1136,13 @@ const Terminal = ({ onClose }) => {
         await typeOutText(manifestos.join('\n'), 25);
       } else if (trimmedCommand === 'ls') {
         const lsOutput = isMobile 
-          ? 'about/\ntransmissions/\njoin mail club/\nmanifesto.txt'
-          : 'about/\norigins/\nphotos/\ntransmissions/\nfrequencies/\nmanifesto.txt';
+          ? 'about/\ntransmissions/\njoin mail club/\npaper trail/\nmanifesto.txt'
+          : 'about/\norigins/\nphotos/\ntransmissions/\npaper trail/\nfrequencies/\nmanifesto.txt';
         await typeOutText(lsOutput);
       } else if (trimmedCommand === 'help') {
         setCurrentPage('help');
         if (isMobile) {
-          await typeOutText('available commands:\n• cd about\n• cd transmissions\n• cd join mail club\n• manifesto.txt\n• clear');
+          await typeOutText('available commands:\n• cd about\n• cd transmissions\n• cd join mail club\n• cd paper trail\n• manifesto.txt\n• clear');
         } else {
           await typeOutText(commands.help);
         }
@@ -1163,7 +1176,8 @@ const Terminal = ({ onClose }) => {
       const trimmed = inputValue.trim();
       // Allow navigation commands even if typing is in progress
       const isNavigationCommand = trimmed === 'cd about' || trimmed === 'cd transmissions' || 
-                                  trimmed === 'cd mail club' || trimmed === 'cd join mail club';
+                                  trimmed === 'cd mail club' || trimmed === 'cd join mail club' ||
+                                  trimmed === 'cd paper trail';
       
       if (!isTyping || isNavigationCommand) {
         console.log('Executing command:', inputValue);
@@ -1468,7 +1482,8 @@ const Terminal = ({ onClose }) => {
                   e.preventDefault();
                   const trimmed = inputValue.trim();
                   const isNavigationCommand = trimmed === 'cd about' || trimmed === 'cd transmissions' || 
-                                              trimmed === 'cd mail club' || trimmed === 'cd join mail club';
+                                              trimmed === 'cd mail club' || trimmed === 'cd join mail club' ||
+                                              trimmed === 'cd paper trail';
                   
                   if (!isTyping || isNavigationCommand) {
                     console.log('Executing command:', inputValue);

@@ -1,0 +1,241 @@
+/* Paper Trail Page Styles */
+.paper-trail-page {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #000;
+  color: #fff;
+  font-family: 'Courier New', 'Menlo', 'Monaco', monospace;
+  overflow-y: auto; /* Allow vertical scrolling if content is too long */
+  z-index: 1000;
+}
+
+/* Terminal Button Styles */
+.terminal-buttons {
+  display: flex;
+  gap: 9px;
+}
+
+.terminal-button {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.terminal-button.close {
+  background-color: #ff5f56;
+}
+
+.terminal-button.close:hover {
+  background-color: #ff4444;
+}
+
+.terminal-button.close:hover .close-icon {
+  opacity: 1;
+}
+
+.close-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #000;
+  font-size: 15px;
+  font-weight: bold;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  line-height: 1;
+}
+
+.terminal-button.minimize {
+  background-color: #ffbd2e;
+}
+
+.terminal-button.maximize {
+  background-color: #27ca3f;
+}
+
+.paper-trail-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 20px;
+  padding: 8px 14px;
+  background-color: #1a1a1a;
+  position: relative;
+  min-height: 40px;
+}
+
+.paper-trail-header .terminal-buttons {
+  display: flex;
+  gap: 9px;
+}
+
+.paper-trail-header .terminal-button {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.paper-trail-header .terminal-button.close {
+  background-color: #ff5f56;
+}
+
+.paper-trail-header .terminal-button.close:hover {
+  background-color: #ff4444;
+}
+
+.paper-trail-header .terminal-button.close:hover .close-icon {
+  opacity: 1;
+}
+
+.paper-trail-header .terminal-button.minimize {
+  background-color: #ffbd2e;
+}
+
+.paper-trail-header .terminal-button.maximize {
+  background-color: #27ca3f;
+}
+
+.paper-trail-header .terminal-title {
+  font-size: 13px;
+  color: #fff;
+  font-weight: bold;
+  margin: 0;
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Content styling - exactly matching Terminal page */
+.paper-trail-content {
+  padding: 40px;
+  max-width: 800px;
+  margin: 0 auto;
+  line-height: 1.6;
+  padding-bottom: 100px; /* Add bottom padding to prevent footer overlap */
+}
+
+.paper-trail-banner {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.paper-trail-banner img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Text styling - exactly matching Terminal page */
+.paper-trail-content p {
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+
+.paper-trail-headline {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 30px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.paper-trail-section-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 30px;
+  margin-bottom: 15px;
+  text-transform: lowercase;
+}
+
+.paper-trail-link {
+  color: #fff;
+  text-decoration: underline;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.paper-trail-link:hover {
+  opacity: 0.7;
+}
+
+.paper-trail-logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 40px;
+  padding-top: 20px;
+}
+
+.paper-trail-logo img {
+  height: 60px;
+  width: auto;
+  filter: brightness(0) invert(1);
+}
+
+.paper-trail-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+}
+
+.paper-trail-footer .paper-trail-logo {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.paper-trail-footer .paper-trail-logo img {
+  height: 50px;
+  width: auto;
+  filter: brightness(0) invert(1);
+}
+
+/* Mobile Responsive Styles - exactly matching Terminal page */
+@media (max-width: 768px) {
+  .paper-trail-header {
+    padding: 8px 14px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .paper-trail-content {
+    padding: 20px;
+    padding-bottom: 100px;
+  }
+  
+  .paper-trail-footer .paper-trail-logo img {
+    height: 40px;
+  }
+}
+
+/* Very narrow screens (like 412px width) */
+@media (max-width: 450px) {
+  .paper-trail-content {
+    padding: 20px 15px 100px 15px;
+  }
+  
+  .paper-trail-footer .paper-trail-logo img {
+    height: 35px;
+  }
+}
