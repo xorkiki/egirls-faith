@@ -885,7 +885,7 @@ const Terminal = ({ onClose }) => {
 
   useEffect(() => {
     // Add initial terminal output - only the login message, no prompt
-    const isSmallScreen = window.innerWidth <= 412;
+    const isSmallScreen = window.innerWidth <= 470;
     const loginMessage = isSmallScreen 
       ? 'Last login: Tue Nov 11 11:11:11'
       : 'Last login: Tue Nov 11 11:11:11 on console';
@@ -906,7 +906,7 @@ const Terminal = ({ onClose }) => {
     let currentOutput = [...output];
     
     // Add prompt
-    const isSmallScreen = window.innerWidth <= 412;
+    const isSmallScreen = window.innerWidth <= 470;
     const promptText = isSmallScreen 
       ? 'egirls ~ % '
       : 'egirls@egirls.faith-MacBook-Pro ~ % ';
@@ -1050,7 +1050,7 @@ const Terminal = ({ onClose }) => {
       }
 
       // Add new prompt
-      const isSmallScreen = window.innerWidth <= 412;
+      const isSmallScreen = window.innerWidth <= 470;
       const promptText = isSmallScreen 
         ? 'egirls ~ % '
         : 'egirls@egirls.faith-MacBook-Pro ~ % ';
@@ -1077,7 +1077,7 @@ const Terminal = ({ onClose }) => {
       }
 
       // Add command to output
-      const isSmallScreen = window.innerWidth <= 412;
+      const isSmallScreen = window.innerWidth <= 470;
       const inputPromptText = isSmallScreen 
         ? 'egirls ~ % '
         : 'egirls@egirls.faith-MacBook-Pro ~ % ';
@@ -1474,7 +1474,7 @@ const Terminal = ({ onClose }) => {
         {!isTyping && (
           <div className="terminal-input-line">
             <span ref={promptRef} className="terminal-prompt">
-              {window.innerWidth <= 412 ? 'egirls ~ % ' : 'egirls@egirls.faith-MacBook-Pro ~ % '}
+              {window.innerWidth <= 470 ? 'egirls ~ % ' : 'egirls@egirls.faith-MacBook-Pro ~ % '}
             </span>
             <input
               ref={inputRef}
