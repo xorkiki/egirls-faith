@@ -191,10 +191,11 @@
   }
 
   .envelope-reveal-container {
-    position: fixed !important; /* Ensure fixed positioning on mobile */
-    top: calc(50% + 220px - 380px) !important; /* Position just above description: description top is at calc(50% + 250px), envelope bottom is 30px above = calc(50% + 220px), so envelope top = calc(50% + 220px - 380px) = calc(50% - 160px) */
+    position: fixed !important; /* Ensure fixed positioning on mobile - stays fixed on scroll */
+    top: auto !important;
+    bottom: calc(50vh - 220px) !important; /* Position just above description: description top is calc(50% + 250px) from top = calc(50vh + 250px). From bottom: calc(100vh - 50vh - 250px) = calc(50vh - 250px). Envelope bottom is 30px above description, so calc(50vh - 250px + 30px) = calc(50vh - 220px) */
     left: 50% !important;
-    transform: translate(-50%, 0) !important; /* Align to top, not center */
+    transform: translate(-50%, 0) !important; /* Align to bottom edge, not center */
     max-width: 85%;
     padding: 20px 15px;
     min-height: 380px; /* Adjust for mobile envelope size */
@@ -230,10 +231,11 @@
   }
 
   .envelope-reveal-container {
-    position: fixed !important; /* Ensure fixed positioning on mobile */
-    top: calc(50% + 220px - 350px) !important; /* Position just above description: description top is at calc(50% + 250px), envelope bottom is 30px above = calc(50% + 220px), so envelope top = calc(50% + 220px - 350px) = calc(50% - 130px) */
+    position: fixed !important; /* Ensure fixed positioning on mobile - stays fixed on scroll */
+    top: auto !important;
+    bottom: calc(50vh - 220px) !important; /* Position just above description: same calculation as 768px breakpoint */
     left: 50% !important;
-    transform: translate(-50%, 0) !important; /* Align to top, not center */
+    transform: translate(-50%, 0) !important; /* Align to bottom edge, not center */
     max-width: 90%;
     padding: 15px 10px;
     min-height: 350px;
