@@ -562,12 +562,12 @@ const EnvelopeScrollReveal = () => {
     
     // Position items so their top aligns with front envelope top
     // With top: 0, translateY moves from top, so translateY = envelopeTopFromTop
-    // On mobile, the calculation may place items too far down. Use a more reasonable default.
-    // If the calculated position is too far down (>90% of stack height), use a safer position
+    // On mobile, use a much simpler calculation - position items at a reasonable default
     const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
-    const maxOffset = stackHeight * 0.75; // Never position items below 75% of stack height
-    const startOffset = isMobile && envelopeTopFromTop > maxOffset 
-      ? maxOffset 
+    // On mobile, use a fixed position at 50% of stack height (middle of envelope area)
+    // This ensures items are visible within the envelope
+    const startOffset = isMobile 
+      ? stackHeight * 0.5  // Position at 50% of stack height on mobile
       : Math.min(envelopeTopFromTop, stackHeight * 0.8); // Cap at 80% of stack height for desktop
     
     // When scrolling (progress > 0), items move UP above the front envelope
