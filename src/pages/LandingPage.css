@@ -4,7 +4,8 @@
   height: 200vh;
   overflow: hidden; /* Keep hidden to preserve window-level scroll mechanism */
   overflow-x: hidden; /* Explicitly prevent horizontal scroll and white bars */
-  background-color: #000; /* Fallback background if image doesn't load */
+  /* No background-color here - global html/body background prevents white bars */
+  /* z-index: -1 on .background-container needs parent to be transparent */
   box-sizing: border-box;
 }
 
