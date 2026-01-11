@@ -1,4 +1,5 @@
 import React from 'react';
+import EnvelopeScrollReveal from '../components/EnvelopeScrollReveal';
 import './PaperTrail.css';
 
 const PaperTrail = ({ onClose }) => {
@@ -28,9 +29,11 @@ const PaperTrail = ({ onClose }) => {
           <div className="terminal-button minimize"></div>
           <div className="terminal-button maximize"></div>
         </div>
-        <div className="terminal-title">paper trail</div>
+        <div className="terminal-title">inside the envelope</div>
       </div>
-      <div className="paper-trail-content">
+      <EnvelopeScrollReveal />
+      <div className="paper-trail-description">
+        from the november edition, a small window into what arrives each month.
       </div>
       <div className="paper-trail-footer">
         <div className="paper-trail-logo">

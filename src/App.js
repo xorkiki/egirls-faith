@@ -18,7 +18,7 @@ function App() {
           <Route path="/about" element={<About onClose={() => window.location.href = '/terminal'} />} />
           <Route path="/confession" element={<Transmissions onClose={() => window.location.href = '/terminal'} />} />
           <Route path="/mailclub" element={<Photos onClose={() => window.location.href = '/terminal'} />} />
-          <Route path="/papertrail" element={<PaperTrail onClose={() => window.location.href = '/terminal'} />} />
+          <Route path="/insidetheenvelope" element={<PaperTrail onClose={() => window.location.href = '/terminal'} />} />
         </Routes>
       </Router>
     </div>

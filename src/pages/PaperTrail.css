@@ -8,8 +8,12 @@
   background-color: #000;
   color: #fff;
   font-family: 'Courier New', 'Menlo', 'Monaco', monospace;
-  overflow-y: auto; /* Allow vertical scrolling if content is too long */
+  overflow-y: auto;
+  overflow-x: hidden;
   z-index: 1000;
+  /* Add padding-top so scrollbar starts below header */
+  padding-top: 48px;
+  box-sizing: border-box;
 }
 
 /* Terminal Button Styles */
@@ -67,8 +71,14 @@
   gap: 20px;
   padding: 8px 14px;
   background-color: #1a1a1a;
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
   min-height: 40px;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
 .paper-trail-header .terminal-buttons {
@@ -184,6 +194,22 @@
   filter: brightness(0) invert(1);
 }
 
+.paper-trail-description {
+  position: fixed;
+  top: calc(50% + 250px); /* Position below the centered envelope (50% + envelope height/2 + spacing) */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 600px;
+  padding: 20px;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #fff;
+  z-index: 10;
+  pointer-events: none; /* Allow scrolling through text */
+}
+
 .paper-trail-footer {
   position: fixed;
   bottom: 0;
@@ -194,6 +220,7 @@
   justify-content: center;
   align-items: center;
   background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+  z-index: 1001; /* Above content mask (18) and front envelope (20) to ensure logo is visible */
 }
 
 .paper-trail-footer .paper-trail-logo {
