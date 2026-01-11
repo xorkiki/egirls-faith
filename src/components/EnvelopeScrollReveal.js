@@ -551,14 +551,24 @@ const EnvelopeScrollReveal = () => {
     const stackHeight = viewportHeight; // Stack is 100vh, so height = viewport height
     
     // Convert envelopeTopLine from bottom-relative to top-relative
-    // envelopeTopLine is negative (e.g., -150px from bottom)
-    // Top position = stackHeight + envelopeTopLine (e.g., 800 + (-150) = 650px from top)
+    // envelopeTopLine is negative (e.g., -150px from bottom, meaning 150px above the stack bottom)
+    // Since stack has height = viewportHeight, and items use top: 0 (top of stack):
+    // - Stack top is at position 0
+    // - Stack bottom is at position stackHeight (viewportHeight)
+    // - Envelope top is at (stackHeight + envelopeTopLine) from the stack top
+    // Example: 800px stack, -150px envelope top = 800 + (-150) = 650px from stack top
     const envelopeTopLine = (frontEnvelopeTop && frontEnvelopeTop < 0) ? frontEnvelopeTop : -150;
     const envelopeTopFromTop = stackHeight + envelopeTopLine;
     
     // Position items so their top aligns with front envelope top
-    // With top: 0, translateY moves from top, so translateY = envelopeTopFromTop - 0 = envelopeTopFromTop
-    const startOffset = envelopeTopFromTop;
+    // With top: 0, translateY moves from top, so translateY = envelopeTopFromTop
+    // On mobile, the calculation may place items too far down. Use a more reasonable default.
+    // If the calculated position is too far down (>90% of stack height), use a safer position
+    const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+    const maxOffset = stackHeight * 0.75; // Never position items below 75% of stack height
+    const startOffset = isMobile && envelopeTopFromTop > maxOffset 
+      ? maxOffset 
+      : Math.min(envelopeTopFromTop, stackHeight * 0.8); // Cap at 80% of stack height for desktop
     
     // When scrolling (progress > 0), items move UP above the front envelope
     // End position: items scroll off screen behind header
