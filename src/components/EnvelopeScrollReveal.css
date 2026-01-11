@@ -230,6 +230,10 @@
   }
 
   .envelope-reveal-container {
+    position: fixed !important; /* Ensure fixed positioning on mobile */
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
     max-width: 90%;
     padding: 15px 10px;
     min-height: 350px;
