@@ -192,10 +192,9 @@
 
   .envelope-reveal-container {
     position: fixed !important; /* Ensure fixed positioning on mobile */
-    top: auto !important; /* Changed from 50% - using bottom positioning */
-    bottom: calc(50dvh - 220px) !important; /* Position just above description text: description top is at calc(50dvh + 250px), envelope bottom is 30px above that = calc(50dvh - 220px) from bottom */
+    top: calc(50% + 220px - 380px) !important; /* Position just above description: description top is at calc(50% + 250px), envelope bottom is 30px above = calc(50% + 220px), so envelope top = calc(50% + 220px - 380px) = calc(50% - 160px) */
     left: 50% !important;
-    transform: translate(-50%, 0) !important; /* Changed from translate(-50%, -50%) - align to bottom, not center */
+    transform: translate(-50%, 0) !important; /* Align to top, not center */
     max-width: 85%;
     padding: 20px 15px;
     min-height: 380px; /* Adjust for mobile envelope size */
@@ -232,10 +231,9 @@
 
   .envelope-reveal-container {
     position: fixed !important; /* Ensure fixed positioning on mobile */
-    top: auto !important; /* Changed from 50% - using bottom positioning */
-    bottom: calc(50dvh - 220px) !important; /* Position just above description text: description top is at calc(50dvh + 250px), envelope bottom is 30px above that = calc(50dvh - 220px) from bottom */
+    top: calc(50% + 220px - 350px) !important; /* Position just above description: description top is at calc(50% + 250px), envelope bottom is 30px above = calc(50% + 220px), so envelope top = calc(50% + 220px - 350px) = calc(50% - 130px) */
     left: 50% !important;
-    transform: translate(-50%, 0) !important; /* Changed from translate(-50%, -50%) - align to bottom, not center */
+    transform: translate(-50%, 0) !important; /* Align to top, not center */
     max-width: 90%;
     padding: 15px 10px;
     min-height: 350px;
