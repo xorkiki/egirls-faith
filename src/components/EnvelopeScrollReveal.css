@@ -9,6 +9,9 @@
   padding-bottom: 120px; /* Account for footer */
   background-color: transparent;
   z-index: 1;
+  /* Performance optimizations */
+  transform-style: preserve-3d;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* Fixed Container - keeps envelope fixed on page */
@@ -190,24 +193,19 @@
   .envelope-reveal-container {
     max-width: 85%;
     padding: 20px 15px;
+    min-height: 380px; /* Adjust for mobile envelope size */
   }
 
   .envelope-layers {
     max-width: 100%;
+    min-height: 380px;
   }
 
   .envelope-back,
   .envelope-front {
     width: 100%;
     max-width: 100%;
-  }
-
-  .envelope-back {
-    transform: none;
-  }
-
-  .envelope-front {
-    transform: translateX(-50%);
+    transform: translateX(-50%); /* Ensure horizontal centering */
   }
 
   .content-stack {
@@ -230,16 +228,19 @@
   .envelope-reveal-container {
     max-width: 90%;
     padding: 15px 10px;
+    min-height: 350px;
   }
 
   .envelope-layers {
     max-width: 100%;
+    min-height: 350px;
   }
 
   .envelope-back,
   .envelope-front {
     width: 100%;
     max-width: 100%;
+    transform: translateX(-50%);
   }
 
   .envelope-back {
@@ -258,6 +259,10 @@
   }
 
   .content-item {
+    max-width: 90%;
+  }
+
+  .bottom-content-mask {
     max-width: 90%;
   }
 }

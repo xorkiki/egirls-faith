@@ -545,13 +545,14 @@ const EnvelopeScrollReveal = () => {
     // - Content stack has height ~450px, so envelope top at -150px from bottom = ~300px from top
     // - We need to position item top at the same position as front envelope top
     
-    // Get content stack height to convert bottom-relative to top-relative
-    const contentStack = sectionRef.current?.querySelector('.content-stack');
-    const stackHeight = contentStack ? contentStack.getBoundingClientRect().height : 450;
+    // Get content stack height - use viewport height directly for consistency
+    // The stack has height: 100vh, so we use window.innerHeight directly
+    const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : 800;
+    const stackHeight = viewportHeight; // Stack is 100vh, so height = viewport height
     
     // Convert envelopeTopLine from bottom-relative to top-relative
     // envelopeTopLine is negative (e.g., -150px from bottom)
-    // Top position = stackHeight + envelopeTopLine (e.g., 450 + (-150) = 300px from top)
+    // Top position = stackHeight + envelopeTopLine (e.g., 800 + (-150) = 650px from top)
     const envelopeTopLine = (frontEnvelopeTop && frontEnvelopeTop < 0) ? frontEnvelopeTop : -150;
     const envelopeTopFromTop = stackHeight + envelopeTopLine;
     
