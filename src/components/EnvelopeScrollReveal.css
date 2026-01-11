@@ -3,36 +3,25 @@
   position: relative;
   width: 100%;
   min-height: 450vh; /* Tall section to drive scroll animation */
-  padding: 0;
   margin: 0;
-  margin-top: 48px; /* Account for fixed header */
-  padding-bottom: 120px; /* Account for footer */
+  padding: 0;
   background-color: transparent;
   z-index: 1;
-  /* Performance optimizations */
-  transform-style: preserve-3d;
-  -webkit-font-smoothing: antialiased;
 }
 
-/* Fixed Container - keeps envelope fixed on page */
-.envelope-reveal-container {
+/* Envelope Container - positioned right above the description text */
+/* Description top is at calc(50vh + 250px) from top = calc(50vh - 250px) from bottom */
+/* Position envelope bottom 20px above description top */
+.envelope-container {
   position: fixed;
-  top: 50%;
+  bottom: calc(50vh - 230px); /* 20px above description top (50vh - 250px + 20px = 50vh - 230px) */
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translateX(-50%);
   width: 100%;
   max-width: 600px;
-  height: auto;
-  min-height: 450px; /* Tall enough to show envelope fully */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: visible;
-  padding: 40px 20px;
-  box-sizing: border-box;
-  z-index: 100; /* Above content stack (5) but below header (1000) */
+  z-index: 100;
   pointer-events: none;
-  clip-path: none;
+  touch-action: auto; /* Allow scrolling */
 }
 
 /* Envelope Layers Container */
@@ -40,19 +29,18 @@
   position: relative;
   width: 100%;
   max-width: 600px;
-  height: auto;
-  min-height: 450px; /* Tall enough to show envelope fully with some padding */
   display: flex;
-  align-items: flex-end; /* Align to bottom for envelope alignment */
+  align-items: flex-end; /* Align envelopes by bottom */
   justify-content: center;
-  /* Create stacking context - all children will stack relative to this */
-  z-index: 0;
-  overflow: visible; /* Allow envelope to show fully, no clipping */
+  pointer-events: none; /* Allow scroll to pass through */
 }
 
-/* Layer 1: Envelope Back */
+/* Back Envelope - lowest z-index (backmost) */
 .envelope-back {
-  position: relative;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
   width: 90%;
   max-width: 600px;
   height: auto;
@@ -63,7 +51,7 @@
   display: block;
 }
 
-/* Layer 2: Content Stack */
+/* Content Stack - items positioned between front and back envelopes */
 .content-stack {
   position: absolute;
   bottom: 0;
@@ -71,37 +59,45 @@
   transform: translateX(-50%);
   width: 80%;
   max-width: 500px;
-  height: 100vh; /* Allow content to move up through viewport */
-  min-height: 100vh;
-  z-index: 5; /* Between back (1) and front (20), but below header (1000) so content scrolls behind */
+  height: 600px; /* Height for content items to move within */
+  z-index: 5; /* Between back (1) and front (20) */
   pointer-events: none;
-  overflow: visible; /* Allow content to move up and scroll behind header */
-  /* Content positioned so it doesn't extend above front envelope on load */
-  /* Front envelope (z-index 20) will visually mask any content that extends above it */
 }
 
+/* Content Items - positioned so top aligns with front envelope top */
 .content-item {
   position: absolute;
-  top: 0; /* Position from top instead of bottom for easier alignment */
+  top: 0; /* Start at top of stack - will be adjusted via transform to align with envelope top */
   left: 50%;
-  transform-origin: center top; /* Transform from top to align tops easily */
+  transform-origin: center top;
   max-width: 90%;
   height: auto;
-  will-change: transform, opacity, z-index;
-  pointer-events: auto;
-  /* Allow wheel events to pass through to scroll container */
-  touch-action: pan-y;
+  will-change: transform, opacity;
+  pointer-events: none; /* Allow scroll to pass through content items */
+  touch-action: auto; /* Allow scrolling */
   filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  /* Smooth rendering optimizations */
-  transform-style: preserve-3d;
-  -webkit-font-smoothing: antialiased;
-  /* No CSS transition - updates handled directly via RAF for consistent linear speed */
-  /* z-index set inline via style prop - must be between 1 (back) and 20 (front) */
+  /* Horizontal centering and vertical positioning handled by inline transform */
 }
 
-/* Layer 3: Envelope Front (overlay) - aligned to bottom of back envelope */
+/* Content Mask - hides content below envelope */
+.envelope-content-mask {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: calc(50vh + 220px); /* Start 10px above envelope bottom (envelope bottom is at calc(50vh - 230px) from bottom = calc(50vh + 230px) from top, so 10px above = calc(50vh + 220px) from top) */
+  background-color: #000 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  width: 100% !important;
+  box-sizing: border-box;
+  z-index: 101; /* Above envelope-container (100) to be visible */
+  pointer-events: none; /* Allow scroll to pass through */
+}
+
+/* Front Envelope - highest z-index (frontmost) */
 .envelope-front {
   position: absolute;
   bottom: 0;
@@ -110,59 +106,28 @@
   width: 90%;
   max-width: 600px;
   height: auto;
-  z-index: 20; /* Above content items (2-10) to mask them, but below header (1000) so content can scroll behind */
+  z-index: 20; /* Highest z-index - covers content */
   pointer-events: none;
   filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4));
   object-fit: contain;
   display: block;
 }
 
-/* Layer 4: Bottom Mask - positioned fixed relative to viewport, outside transformed container */
-/* Moved outside envelope-reveal-container (which has transform) to use true viewport-relative positioning */
-/* Only the mask element was moved in DOM; envelope layout remains unchanged */
-.bottom-content-mask {
-  position: fixed; /* Fixed relative to viewport - works because mask is outside transformed container */
-  bottom: 0; /* Bottom edge pinned to viewport bottom */
-  /* height set dynamically via inline style - extends upward from bottom */
-  left: 50%;
-  transform: translateX(-50%); /* Only horizontal centering, no vertical transform */
-  width: 100%;
-  max-width: 650px;
-  /* No min-height - height is calculated to extend from viewport bottom to above envelope front */
-  background: #000 !important; /* Solid black to match page background - force visibility */
-  /* z-index: envelope-reveal-container is 100 and creates stacking context (transform) */
-  /* Content (5) and front envelope (20) are inside container's isolated stacking context */
-  /* Mask is outside container in envelope-scroll-section stacking context */
-  /* Since mask cannot be between content (5) and front (20) when outside their stacking context, */
-  /* we use z-index 105 to be above container (100) but below header/footer (1000+) */
-  /* The visual layering will have mask above container content, but front envelope renders crisply */
-  z-index: 105; /* Above envelope-reveal-container (100) to be visible and mask content */
-  pointer-events: none;
-  opacity: 1 !important; /* Ensure fully visible */
-  visibility: visible !important; /* Force visibility */
-  display: block !important; /* Ensure display */
-  /* Bottom edge is fixed at viewport bottom (bottom: 0) */
-  /* Height extends upward from bottom to slightly above envelope front bottom */
-  /* No top, margin, or translateY - only bottom and height are set */
-}
-
 /* Reduced Motion Fallback */
 .envelope-scroll-section.reduced-motion {
   min-height: auto;
   padding: 80px 40px;
-  margin-top: 48px;
-  padding-bottom: 120px;
 }
 
-.envelope-scroll-section.reduced-motion .envelope-reveal-container {
+.envelope-scroll-section.reduced-motion .envelope-container {
   position: relative;
-  top: auto;
+  bottom: auto;
   left: auto;
   transform: none;
-  height: auto;
-  min-height: 600px;
-  padding: 40px 20px;
+  width: 100%;
+  max-width: 600px;
   margin: 0 auto;
+  padding: 40px 20px;
 }
 
 .content-stack-static {
@@ -187,41 +152,29 @@
 /* Mobile Responsive */
 @media (max-width: 768px) {
   .envelope-scroll-section {
-    min-height: 400vh; /* Slightly shorter on mobile */
+    min-height: 400vh;
   }
 
-  .envelope-reveal-container {
-    position: fixed !important; /* Ensure fixed positioning on mobile - stays fixed on scroll */
-    top: auto !important;
-    bottom: calc(50vh - 220px) !important; /* Position just above description: description top is calc(50% + 250px) from top = calc(50vh + 250px). From bottom: calc(100vh - 50vh - 250px) = calc(50vh - 250px). Envelope bottom is 30px above description, so calc(50vh - 250px + 30px) = calc(50vh - 220px) */
-    left: 50% !important;
-    transform: translate(-50%, 0) !important; /* Align to bottom edge, not center */
-    max-width: 85%;
-    padding: 20px 15px;
-    min-height: 380px; /* Adjust for mobile envelope size */
-  }
-
-  .envelope-layers {
-    max-width: 100%;
-    min-height: 380px;
+  .envelope-container {
+    bottom: calc(50vh - 230px); /* Same calculation as desktop - 20px above description */
+    transform: translateX(-50%);
+    max-width: 600px;
   }
 
   .envelope-back,
   .envelope-front {
-    width: 100%;
-    max-width: 100%;
-    transform: translateX(-50%); /* Ensure horizontal centering */
+    width: 90%;
+    max-width: 600px;
   }
 
   .content-stack {
-    width: 75%;
-    max-width: 400px;
-    height: 100vh; /* Allow content to move up through viewport - same as desktop */
-    min-height: 100vh;
+    width: 80%;
+    max-width: 500px;
+    height: 500px;
   }
 
   .content-item {
-    max-width: 85%;
+    max-width: 90%;
   }
 }
 
@@ -230,68 +183,17 @@
     min-height: 350vh;
   }
 
-  .envelope-reveal-container {
-    position: fixed !important; /* Ensure fixed positioning on mobile - stays fixed on scroll */
-    top: auto !important;
-    bottom: calc(50vh - 220px) !important; /* Position just above description: same calculation as 768px breakpoint */
-    left: 50% !important;
-    transform: translate(-50%, 0) !important; /* Align to bottom edge, not center */
+  .envelope-container {
     max-width: 90%;
-    padding: 15px 10px;
-    min-height: 350px;
-  }
-
-  .envelope-layers {
-    max-width: 100%;
-    min-height: 350px;
-  }
-
-  .envelope-back,
-  .envelope-front {
-    width: 100%;
-    max-width: 100%;
-    transform: translateX(-50%);
-  }
-
-  .envelope-back {
-    transform: none;
-  }
-
-  .envelope-front {
-    transform: translateX(-50%);
   }
 
   .content-stack {
     width: 80%;
     max-width: 350px;
-    height: 100vh; /* Allow content to move up through viewport - same as desktop */
-    min-height: 100vh;
+    height: 450px;
   }
 
   .content-item {
     max-width: 90%;
   }
-
-  .bottom-content-mask {
-    max-width: 90%;
-  }
 }
-
-/* iOS Safari specific fixes */
-@supports (-webkit-touch-callout: none) {
-  .envelope-reveal-container {
-    -webkit-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
-  }
-}
-
-/* Prevent layout shift */
-.envelope-back,
-.envelope-front,
-.content-item {
-  display: block;
-  image-rendering: -webkit-optimize-contrast;
-  image-rendering: crisp-edges;
-}
-
-/* Performance optimizations - removed contain as it interferes with z-index stacking */
