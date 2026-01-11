@@ -255,8 +255,14 @@
   
   /* Ensure folders stay within mobile viewport */
   .photos-content {
-    height: calc(100vh - 40px - 80px); /* Adjust for mobile header height */
+    height: calc(100vh - 40px - 140px); /* Adjust for mobile header height + footer + padding */
     top: 40px; /* Position below mobile header */
+    bottom: 140px; /* Position above footer + 60px padding for mobile browser UI */
     overflow: hidden; /* Prevent content from extending beyond bounds */
+  }
+  
+  /* Move footer up and add padding below it for mobile browser UI */
+  .photos-footer {
+    bottom: 60px; /* Move footer up by 60px to create space below for mobile browser UI */
   }
 }
