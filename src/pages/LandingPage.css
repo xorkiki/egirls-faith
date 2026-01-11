@@ -2,7 +2,10 @@
   position: relative;
   width: 100vw;
   height: 200vh;
-  overflow: hidden;
+  overflow-x: hidden; /* Prevent horizontal scroll and white bars */
+  overflow-y: auto; /* Allow vertical scrolling for navigation */
+  background-color: #000; /* Fallback background if image doesn't load */
+  box-sizing: border-box;
 }
 
 .background-container {
@@ -12,6 +15,7 @@
   width: 100vw;
   height: 100vh;
   z-index: -1;
+  background-color: #000; /* Fallback background */
 }
 
 .background-image {
@@ -22,6 +26,8 @@
   height: 100%;
   transform-origin: center center;
   transition: transform 0.1s ease-out;
+  /* background-image styles applied via inline style in component */
+  /* backgroundSize: cover ensures image fills container edge-to-edge */
 }
 
 .fade-overlay {
