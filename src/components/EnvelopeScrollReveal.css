@@ -213,7 +213,8 @@
   .content-stack {
     width: 75%;
     max-width: 400px;
-    height: 350px;
+    height: 100vh; /* Allow content to move up through viewport - same as desktop */
+    min-height: 100vh;
   }
 
   .content-item {
@@ -252,7 +253,8 @@
   .content-stack {
     width: 80%;
     max-width: 350px;
-    height: 300px;
+    height: 100vh; /* Allow content to move up through viewport - same as desktop */
+    min-height: 100vh;
   }
 
   .content-item {
