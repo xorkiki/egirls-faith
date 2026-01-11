@@ -908,7 +908,7 @@ const Terminal = ({ onClose }) => {
     // Add prompt
     const isSmallScreen = window.innerWidth <= 412;
     const promptText = isSmallScreen 
-      ? 'egirls@egirls.faith ~ % '
+      ? 'egirls ~ % '
       : 'egirls@egirls.faith-MacBook-Pro ~ % ';
     
     currentOutput.push({ type: 'system', content: promptText });
@@ -1052,7 +1052,7 @@ const Terminal = ({ onClose }) => {
       // Add new prompt
       const isSmallScreen = window.innerWidth <= 412;
       const promptText = isSmallScreen 
-        ? 'egirls@egirls.faith ~ % '
+        ? 'egirls ~ % '
         : 'egirls@egirls.faith-MacBook-Pro ~ % ';
       
       setOutput(prev => [...prev, { type: 'system', content: promptText }]);
@@ -1077,7 +1077,11 @@ const Terminal = ({ onClose }) => {
       }
 
       // Add command to output
-      setOutput(prev => [...prev, { type: 'input', content: `egirls@egirls.faith-MacBook-Pro ~ % ${command}` }]);
+      const isSmallScreen = window.innerWidth <= 412;
+      const inputPromptText = isSmallScreen 
+        ? 'egirls ~ % '
+        : 'egirls@egirls.faith-MacBook-Pro ~ % ';
+      setOutput(prev => [...prev, { type: 'input', content: `${inputPromptText}${command}` }]);
 
       if (trimmedCommand === 'cd about') {
         console.log('Navigating to /about');
@@ -1470,7 +1474,7 @@ const Terminal = ({ onClose }) => {
         {!isTyping && (
           <div className="terminal-input-line">
             <span ref={promptRef} className="terminal-prompt">
-              {window.innerWidth <= 412 ? 'egirls@egirls.faith ~ % ' : 'egirls@egirls.faith-MacBook-Pro ~ % '}
+              {window.innerWidth <= 412 ? 'egirls ~ % ' : 'egirls@egirls.faith-MacBook-Pro ~ % '}
             </span>
             <input
               ref={inputRef}
