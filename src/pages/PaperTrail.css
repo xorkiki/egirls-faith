@@ -16,6 +16,29 @@
   box-sizing: border-box;
 }
 
+/* Placeholder while loading - matches page background, prevents layout shift */
+.paper-trail-placeholder {
+  position: absolute;
+  top: 48px; /* Account for header */
+  left: 0;
+  width: 100%;
+  height: calc(100vh - 48px);
+  background-color: #000; /* Match page background */
+  z-index: 99; /* Below header (1000) but above content when loading */
+}
+
+/* Content wrapper - fades in when images are ready */
+.paper-trail-content-wrapper {
+  opacity: 0;
+  transition: opacity 0.4s ease-in;
+  /* Ensure wrapper doesn't cause layout shift */
+  min-height: calc(100vh - 48px);
+}
+
+.paper-trail-content-wrapper.paper-trail-ready {
+  opacity: 1;
+}
+
 /* Terminal Button Styles */
 .terminal-buttons {
   display: flex;
