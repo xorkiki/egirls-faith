@@ -1,35 +1,36 @@
 # Egirls Website
 
-A modern, responsive website built with React following best practices for code organization and maintainability.
+A modern, responsive website for egirls, an experimental publication exploring the chaos of existence in the digital age. Built with React following best practices for code organization and maintainability.
 
-## 🏗️ Project Structure
+## About
+
+Egirls is a new media experiment for the terminally online. It's an experimental publication that explores digital culture through monthly physical editions called "the transmission" - curated drops of analog artifacts sent through the postal system. The publication features essays on digital philosophy, reflections on being a woman in the digital age, visual manifestos, and art that embodies what it means to be a messy human in a polished algorithmic world.
+
+## Project Structure
 
 ```
 /src
   /components
-    /shared
-      MacOSHeader.css          # Shared macOS-style header styles
-    # Reusable UI components go here
+    CardStack.js
+    EnvelopeScrollReveal.js
+    MobileNotesPage.js
+    NotesModal.js
+    StripeModal.js
+    StripeUSModal.js
   
   /pages
-    LandingPage.js            # Landing page with hero image
+    LandingPage.js            # Landing page with hero image and scroll-to-reveal
     LandingPage.css
-    Terminal.js               # Main terminal interface with routing
-    Terminal.css              # Terminal styles
-    AboutPage.js              # About page component
-    AboutPage.css
-    PhotosPage.js             # Photos gallery page
-    PhotosPage.css
-    IdentityPage.js           # Brand identity collage page
-    IdentityPage.css
-    ManifestoPage.js          # Manifesto with typing effect
-    ManifestoPage.css
-    WineNightPage.js          # Wine night photos grid
-    WineNightPage.css
-    TransmissionsPage.js       # Transmissions page
-    TransmissionsPage.css
-    TattoosPage.js            # Tattoos page
-    TattoosPage.css
+    Terminal.js               # Main terminal interface with navigation
+    Terminal.css
+    About.js                  # About egirls page
+    About.css
+    Transmissions.js          # Transmissions subscription page
+    Transmissions.css
+    Photos.js                 # Mail club page with interactive notes interface
+    Photos.css
+    PaperTrail.js             # Inside the envelope page with scroll reveal
+    PaperTrail.css
   
   /scripts
     # Image optimization and utility scripts
@@ -40,16 +41,16 @@ A modern, responsive website built with React following best practices for code 
   index.css                   # Global styles
 ```
 
-## 🚀 Features
+## Features
 
-- **Clean Architecture**: Each page is a separate component with its own CSS file
-- **Responsive Design**: Mobile-first approach with touch/swipe support
-- **macOS-style UI**: Consistent window controls and styling across all pages
-- **Image Optimization**: Built-in image optimization scripts
-- **React Router**: Clean navigation between pages
-- **Modular CSS**: Shared styles with page-specific overrides
+- Clean Architecture: Each page is a separate component with its own CSS file
+- Responsive Design: Mobile-first approach with touch/swipe support
+- macOS-style UI: Consistent window controls and styling across all pages
+- Image Optimization: Built-in image optimization scripts
+- React Router: Clean navigation between pages
+- Modular CSS: Shared styles with page-specific overrides
 
-## 🛠️ Development
+## Development
 
 ```bash
 # Install dependencies
@@ -62,42 +63,38 @@ npm start
 npm run build
 ```
 
-## 📱 Pages
+## Pages
 
-1. **Landing Page**: Hero image with scroll-to-reveal terminal
-2. **Terminal**: Command-line interface with navigation
-3. **About**: Information about the egirls collective
-4. **Photos**: Photo gallery with navigation
-5. **Identity**: Interactive brand asset collage
-6. **Manifesto**: Typing effect with manifesto text
-7. **Wine Night**: Photo grid from wine night event
-8. **Transmissions**: Future content page
-9. **Tattoos**: Future tattoo designs page
+1. **Landing Page** (/): Hero image with scroll-to-reveal that transitions to the terminal
+2. **Terminal** (/terminal): Command-line interface serving as the main navigation hub
+3. **About** (/about): Information about egirls, the publication, and the philosophy
+4. **Transmissions** (/confession): Subscription page with Typeform integration for monthly editions
+5. **Mail Club** (/mailclub): Interactive page with draggable desktop icons and notes interface
+6. **Inside the Envelope** (/insidetheenvelope): Scroll-reveal page showing example envelope and letter content
 
-## 🎨 Design Principles
+## Design Principles
 
-- **Consistency**: All pages use the same macOS-style header
-- **Responsiveness**: Mobile-first design with progressive enhancement
-- **Performance**: Optimized images and lazy loading
-- **Accessibility**: Proper alt text and semantic HTML
-- **Maintainability**: Clean separation of concerns
+- Consistency: All pages use the same macOS-style header with window controls
+- Responsiveness: Mobile-first design with progressive enhancement
+- Performance: Optimized images and lazy loading
+- Accessibility: Proper alt text and semantic HTML
+- Maintainability: Clean separation of concerns
 
-## 🔧 Scripts
+## Scripts
 
 The `/scripts` directory contains utility scripts for:
-- Image optimization
-- File management
+- Image optimization and compression
+- File management and cleanup
 - Build automation
 
-## 📦 Dependencies
+## Dependencies
 
 - React 18+
-- React Router DOM
-- Modern CSS features
-- Image optimization tools
+- React Router DOM 7+
+- Framer Motion
+- React Scripts
+- Image optimization tools (imagemin, mozjpeg, pngquant, webp)
 
-## 🚀 Deployment
+## Deployment
 
 The build process creates an optimized production bundle in the `/build` directory, ready for deployment to any static hosting service.
-
-# Reverted to working state
