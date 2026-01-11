@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import EnvelopeScrollReveal from '../components/EnvelopeScrollReveal';
+// TEMPORARY TEST: Replaced EnvelopeScrollReveal with test placeholder
+// import EnvelopeScrollReveal from '../components/EnvelopeScrollReveal';
+import EnvelopeTestPlaceholder from '../components/EnvelopeTestPlaceholder';
 import './PaperTrail.css';
 
 const PaperTrail = ({ onClose }) => {
@@ -71,7 +73,9 @@ const PaperTrail = ({ onClose }) => {
       
       {/* Main content - fades in when ready */}
       <div className={`paper-trail-content-wrapper ${isReady ? 'paper-trail-ready' : ''}`}>
-        <EnvelopeScrollReveal />
+        {/* TEMPORARY TEST: Using test placeholder instead of EnvelopeScrollReveal */}
+        <EnvelopeTestPlaceholder />
+        {/* <EnvelopeScrollReveal /> */}
         <div className="paper-trail-description">
           from the november edition, a small window into what arrives each month.
         </div>
