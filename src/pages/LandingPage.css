@@ -9,8 +9,12 @@
   position: fixed;
   top: 0;
   left: 0;
+  right: 0;
+  bottom: 0;
   width: 100vw;
   height: 100vh;
+  margin: 0;
+  padding: 0;
   z-index: 0; /* Changed from -1 to 0 - global body background covers z-index: -1 on mobile */
 }
 
@@ -18,8 +22,12 @@
   position: absolute;
   top: 0;
   left: 0;
+  right: 0;
+  bottom: 0;
   width: 100%;
   height: 100%;
+  margin: 0;
+  padding: 0;
   transform-origin: center center;
   transition: transform 0.1s ease-out;
 }
@@ -66,6 +74,33 @@
 
 /* Responsive design */
 @media (max-width: 768px) {
+  .landing-page {
+    width: 100vw;
+    min-width: 100vw;
+    max-width: 100vw;
+    margin: 0;
+    padding: 0;
+  }
+
+  .background-container {
+    width: 100vw;
+    height: 100dvh; /* Use dynamic viewport height for mobile */
+    min-width: 100vw;
+    max-width: 100vw;
+    min-height: 100dvh;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+  }
+
+  .background-image {
+    width: 100%;
+    height: 100%;
+    min-width: 100%;
+    min-height: 100%;
+  }
+
   .title {
     font-size: 2.5rem;
   }
