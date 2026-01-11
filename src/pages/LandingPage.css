@@ -2,11 +2,7 @@
   position: relative;
   width: 100vw;
   height: 200vh;
-  overflow: hidden; /* Keep hidden to preserve window-level scroll mechanism */
-  overflow-x: hidden; /* Explicitly prevent horizontal scroll and white bars */
-  /* No background-color here - global html/body background prevents white bars */
-  /* z-index: -1 on .background-container needs parent to be transparent */
-  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .background-container {
@@ -16,7 +12,6 @@
   width: 100vw;
   height: 100vh;
   z-index: -1;
-  /* No background-color - the .background-image div contains the actual image */
 }
 
 .background-image {
@@ -27,8 +22,6 @@
   height: 100%;
   transform-origin: center center;
   transition: transform 0.1s ease-out;
-  /* background-image styles applied via inline style in component */
-  /* backgroundSize: cover ensures image fills container edge-to-edge */
 }
 
 .fade-overlay {
