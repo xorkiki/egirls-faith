@@ -262,6 +262,18 @@
 
 /* Mobile Responsive Styles - exactly matching Terminal page */
 @media (max-width: 768px) {
+  .paper-trail-page {
+    height: 100dvh; /* Use dynamic viewport height on mobile to account for browser chrome */
+  }
+  
+  .paper-trail-content-wrapper {
+    min-height: calc(100dvh - 48px); /* Use dynamic viewport height on mobile */
+  }
+  
+  .paper-trail-placeholder {
+    height: calc(100dvh - 48px); /* Use dynamic viewport height on mobile */
+  }
+  
   .paper-trail-header {
     padding: 8px 14px;
     flex-direction: row;
