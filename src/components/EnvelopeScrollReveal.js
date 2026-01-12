@@ -1,16 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useMotionValue, useTransform, motion } from 'framer-motion';
 import './EnvelopeScrollReveal.css';
 
 const EnvelopeScrollReveal = () => {
   const sectionRef = useRef(null);
-  const [scrollProgress, setScrollProgress] = useState(0);
-  const targetProgressRef = useRef(0);
-  const currentProgressRef = useRef(0);
-  const animationFrameRef = useRef(null);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const [envelopeTopOffset, setEnvelopeTopOffset] = useState(400); // Default envelope height estimate
   const [stackHeight, setStackHeight] = useState(600); // Content stack height (varies by screen size)
-  const initialViewportHeightRef = useRef(null); // Cache initial viewport height to avoid iOS address bar issues
+  const [viewportHeight, setViewportHeight] = useState(800);
+  
+  // Use refs for values that need to be read in transforms (transforms are created once)
+  const startingOffsetRef = useRef(0);
+  const scrollOffScreenDistanceRef = useRef(1000);
+  
+  // Update refs when state changes
+  useEffect(() => {
+    startingOffsetRef.current = stackHeight - envelopeTopOffset;
+    scrollOffScreenDistanceRef.current = viewportHeight + 200;
+  }, [stackHeight, envelopeTopOffset, viewportHeight]);
 
   // Content items in order (front to back in z-index)
   const contentItems = [
@@ -25,7 +32,14 @@ const EnvelopeScrollReveal = () => {
 
   const totalItems = contentItems.length;
 
-  // Check for reduced motion preference and cache initial viewport height
+  // Motion value for scroll progress (0 to 1)
+  const scrollProgressMotionValue = useMotionValue(0);
+  
+  // Use motion value directly (no spring) to prevent pop-up/bounce when scrolling stops
+  // Spring physics was causing overshoot when scrolling stopped
+  const smoothProgress = scrollProgressMotionValue;
+
+  // Check for reduced motion preference
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     setPrefersReducedMotion(mediaQuery.matches);
@@ -33,17 +47,27 @@ const EnvelopeScrollReveal = () => {
     const handleChange = (e) => setPrefersReducedMotion(e.matches);
     mediaQuery.addEventListener('change', handleChange);
     
-    // Cache initial viewport height to avoid iOS Safari address bar issues
-    // Use visualViewport API if available (more accurate on mobile), otherwise use innerHeight
-    if (typeof window !== 'undefined') {
-      if (window.visualViewport) {
-        initialViewportHeightRef.current = window.visualViewport.height;
-      } else {
-        initialViewportHeightRef.current = window.innerHeight;
+    // Get viewport height
+    const updateViewportHeight = () => {
+      if (typeof window !== 'undefined') {
+        const height = window.visualViewport?.height || window.innerHeight;
+        setViewportHeight(height);
       }
+    };
+    
+    updateViewportHeight();
+    window.addEventListener('resize', updateViewportHeight);
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', updateViewportHeight);
     }
     
-    return () => mediaQuery.removeEventListener('change', handleChange);
+    return () => {
+      mediaQuery.removeEventListener('change', handleChange);
+      window.removeEventListener('resize', updateViewportHeight);
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', updateViewportHeight);
+      }
+    };
   }, []);
 
   // Measure front envelope top position and content stack height to align content items
@@ -55,17 +79,12 @@ const EnvelopeScrollReveal = () => {
       const contentStack = sectionRef.current?.querySelector('.content-stack');
       
       if (frontEnvelope && contentStack) {
-        // Both front envelope and content stack use bottom: 0, so they share the same reference point
         const envelopeRect = frontEnvelope.getBoundingClientRect();
         const stackRect = contentStack.getBoundingClientRect();
         
-        // Calculate envelope height (distance from envelope bottom to envelope top)
         const envelopeHeight = envelopeRect.height;
-        
-        // Measure actual content stack height (varies by screen size due to CSS media queries)
         const actualStackHeight = stackRect.height;
         
-        // Since both use bottom: 0, envelope top is at envelopeHeight pixels from the stack bottom
         setEnvelopeTopOffset(envelopeHeight);
         setStackHeight(actualStackHeight);
       }
@@ -73,14 +92,12 @@ const EnvelopeScrollReveal = () => {
 
     measureDimensions();
     
-    // Use ResizeObserver for more accurate measurement on size changes
     const frontEnvelope = sectionRef.current?.querySelector('.envelope-front');
     const contentStack = sectionRef.current?.querySelector('.content-stack');
     
     let resizeObserver = null;
     if ((frontEnvelope || contentStack) && window.ResizeObserver) {
       resizeObserver = new ResizeObserver(() => {
-        // Small delay to ensure CSS has updated
         setTimeout(measureDimensions, 10);
       });
       if (frontEnvelope) resizeObserver.observe(frontEnvelope);
@@ -89,12 +106,10 @@ const EnvelopeScrollReveal = () => {
     
     window.addEventListener('resize', measureDimensions);
     
-    // Also measure after image loads
     if (frontEnvelope) {
       frontEnvelope.addEventListener('load', measureDimensions);
     }
 
-    // Measure after delays to catch late-loading images
     const timeouts = [100, 500, 1000].map(delay => 
       setTimeout(measureDimensions, delay)
     );
@@ -112,14 +127,14 @@ const EnvelopeScrollReveal = () => {
     };
   }, []);
 
-  // Handle scroll progress with smooth interpolation
+  // Track scroll on the container and update motion value
   useEffect(() => {
     if (prefersReducedMotion || !sectionRef.current) return;
 
     const section = sectionRef.current;
     const scrollContainer = section.closest('.paper-trail-page');
     
-    const SMOOTHING_FACTOR = 0.02; // Much lower for very smooth animation
+    if (!scrollContainer) return;
     
     const handleScroll = () => {
       if (!section || !scrollContainer) return;
@@ -129,37 +144,15 @@ const EnvelopeScrollReveal = () => {
       const totalScrollHeight = scrollContainer.scrollHeight;
       
       const maxScrollTop = Math.max(0, totalScrollHeight - containerHeight);
-      const animationCompleteAt = maxScrollTop * 1.0; // Use full scroll distance
-      const rawProgress = animationCompleteAt > 0
-        ? Math.max(0, Math.min(1, containerScrollTop / animationCompleteAt))
+      const progress = maxScrollTop > 0
+        ? Math.max(0, Math.min(1, containerScrollTop / maxScrollTop))
         : 0;
       
-      // Apply ease-out for consistent speed (faster at beginning, slower at end)
-      // This prevents acceleration at the end and makes the beginning faster
-      const easedProgress = 1 - Math.pow(1 - rawProgress, 3); // Ease-out cubic
-      
-      targetProgressRef.current = easedProgress;
+      // Update motion value (Framer Motion will handle smooth interpolation)
+      scrollProgressMotionValue.set(progress);
     };
 
-    // Smooth interpolation loop
-    const animate = () => {
-      const currentProgress = currentProgressRef.current;
-      const targetProgress = targetProgressRef.current;
-      const difference = targetProgress - currentProgress;
-      
-      if (Math.abs(difference) > 0.0001) {
-        const newProgress = currentProgress + (difference * SMOOTHING_FACTOR);
-        currentProgressRef.current = newProgress;
-        setScrollProgress(newProgress);
-      } else {
-        currentProgressRef.current = targetProgress;
-        setScrollProgress(targetProgress);
-      }
-      
-      animationFrameRef.current = requestAnimationFrame(animate);
-    };
-
-    // Scroll handler
+    // Throttled scroll handler
     let ticking = false;
     const onScroll = () => {
       if (!ticking) {
@@ -171,12 +164,8 @@ const EnvelopeScrollReveal = () => {
       }
     };
 
-    if (scrollContainer) {
-      scrollContainer.addEventListener('scroll', onScroll, { passive: true });
-    }
+    scrollContainer.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', handleScroll, { passive: true });
-
-    // Remove wheel event handler - let normal scrolling work everywhere
 
     // Initial calculation
     handleScroll();
@@ -184,72 +173,65 @@ const EnvelopeScrollReveal = () => {
     setTimeout(() => handleScroll(), 200);
     setTimeout(() => handleScroll(), 500);
 
-    // Start animation loop
-    animationFrameRef.current = requestAnimationFrame(animate);
-
     return () => {
-      if (scrollContainer) {
-        scrollContainer.removeEventListener('scroll', onScroll);
-      }
+      scrollContainer.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', handleScroll);
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
     };
-  }, [prefersReducedMotion]);
+  }, [prefersReducedMotion, scrollProgressMotionValue]);
 
-  // Calculate item transform based on scroll progress
-  const getItemTransform = (index, progress) => {
-    const itemSegmentStart = index * (1 / totalItems);
-    const itemSegmentEnd = (index + 1) * (1 / totalItems);
-    
-    const isActive = progress >= itemSegmentStart && progress < itemSegmentEnd;
-    const isPrevious = progress >= itemSegmentEnd;
-    const isUpcoming = progress < itemSegmentStart;
-    
-    const localProgress = isActive 
-      ? (progress - itemSegmentStart) / (1 / totalItems)
-      : isPrevious ? 1 : 0;
-    
-    // Items start with their top aligned to front envelope top
-    // Content stack has variable height (stackHeight), items use top: 0 (top of stack = stackHeight from bottom)
-    // Envelope top is at envelopeTopOffset from bottom
-    // To align item top with envelope top: translate down by (stackHeight - envelopeTopOffset)
-    const startingOffset = stackHeight - envelopeTopOffset; // Translate down to align tops
-    
-    // Items scroll upward until they're completely off screen behind header
-    // Calculate distance needed: from envelope top to top of viewport (y=0) plus buffer
-    // Use cached initial viewport height to avoid iOS Safari address bar issues
-    // visualViewport API is more accurate on mobile, but fallback to cached initial height
-    const viewportHeight = typeof window !== 'undefined' 
-      ? (window.visualViewport?.height || initialViewportHeightRef.current || window.innerHeight)
-      : 800;
-    const scrollOffScreenDistance = viewportHeight + 200; // Enough distance to scroll completely off screen
-    
-    const translateY = startingOffset - (localProgress * scrollOffScreenDistance);
-    
-    // Scale: business card (index 0) is 70% smaller (30% of original size)
-    // Poems (index 4-6) are 20% smaller (80% of original size)
-    // All items stay at base scale - no scaling animation
-    let baseScale = 1.0;
-    if (index === 0) {
-      baseScale = 0.3; // Business card: 70% smaller = 30% scale
-    } else if (index >= 4 && index <= 6) {
-      baseScale = 0.8; // Poems: 20% smaller = 80% scale
-    }
-    
-    // No scaling animation - items stay at base scale
-    const scale = baseScale;
-    
-    // Opacity: always fully opaque, no fading
-    const opacity = 1.0;
-    
-    return {
-      transform: `translateX(-50%) translateY(${translateY}px) scale(${scale})`,
-      opacity,
-      zIndex: contentItems[index].zIndex,
-    };
-  };
+  // Create transforms for each content item (must be at top level - hooks rule)
+  // Create each transform explicitly (7 items total)
+  // Transforms use refs so they always read current values
+  const item0Y = useTransform(smoothProgress, (progress) => {
+    const itemSegmentStart = 0 * (1 / totalItems);
+    const itemSegmentEnd = 1 * (1 / totalItems);
+    const localProgress = progress < itemSegmentStart ? 0 : progress > itemSegmentEnd ? 1 : (progress - itemSegmentStart) / (itemSegmentEnd - itemSegmentStart);
+    return startingOffsetRef.current - (localProgress * scrollOffScreenDistanceRef.current);
+  });
+  
+  const item1Y = useTransform(smoothProgress, (progress) => {
+    const itemSegmentStart = 1 * (1 / totalItems);
+    const itemSegmentEnd = 2 * (1 / totalItems);
+    const localProgress = progress < itemSegmentStart ? 0 : progress > itemSegmentEnd ? 1 : (progress - itemSegmentStart) / (itemSegmentEnd - itemSegmentStart);
+    return startingOffsetRef.current - (localProgress * scrollOffScreenDistanceRef.current);
+  });
+  
+  const item2Y = useTransform(smoothProgress, (progress) => {
+    const itemSegmentStart = 2 * (1 / totalItems);
+    const itemSegmentEnd = 3 * (1 / totalItems);
+    const localProgress = progress < itemSegmentStart ? 0 : progress > itemSegmentEnd ? 1 : (progress - itemSegmentStart) / (itemSegmentEnd - itemSegmentStart);
+    return startingOffsetRef.current - (localProgress * scrollOffScreenDistanceRef.current);
+  });
+  
+  const item3Y = useTransform(smoothProgress, (progress) => {
+    const itemSegmentStart = 3 * (1 / totalItems);
+    const itemSegmentEnd = 4 * (1 / totalItems);
+    const localProgress = progress < itemSegmentStart ? 0 : progress > itemSegmentEnd ? 1 : (progress - itemSegmentStart) / (itemSegmentEnd - itemSegmentStart);
+    return startingOffsetRef.current - (localProgress * scrollOffScreenDistanceRef.current);
+  });
+  
+  const item4Y = useTransform(smoothProgress, (progress) => {
+    const itemSegmentStart = 4 * (1 / totalItems);
+    const itemSegmentEnd = 5 * (1 / totalItems);
+    const localProgress = progress < itemSegmentStart ? 0 : progress > itemSegmentEnd ? 1 : (progress - itemSegmentStart) / (itemSegmentEnd - itemSegmentStart);
+    return startingOffsetRef.current - (localProgress * scrollOffScreenDistanceRef.current);
+  });
+  
+  const item5Y = useTransform(smoothProgress, (progress) => {
+    const itemSegmentStart = 5 * (1 / totalItems);
+    const itemSegmentEnd = 6 * (1 / totalItems);
+    const localProgress = progress < itemSegmentStart ? 0 : progress > itemSegmentEnd ? 1 : (progress - itemSegmentStart) / (itemSegmentEnd - itemSegmentStart);
+    return startingOffsetRef.current - (localProgress * scrollOffScreenDistanceRef.current);
+  });
+  
+  const item6Y = useTransform(smoothProgress, (progress) => {
+    const itemSegmentStart = 6 * (1 / totalItems);
+    const itemSegmentEnd = 7 * (1 / totalItems);
+    const localProgress = progress < itemSegmentStart ? 0 : progress > itemSegmentEnd ? 1 : (progress - itemSegmentStart) / (itemSegmentEnd - itemSegmentStart);
+    return startingOffsetRef.current - (localProgress * scrollOffScreenDistanceRef.current);
+  });
+  
+  const itemYTransforms = [item0Y, item1Y, item2Y, item3Y, item4Y, item5Y, item6Y];
 
   // Reduced motion fallback
   if (prefersReducedMotion) {
@@ -297,14 +279,29 @@ const EnvelopeScrollReveal = () => {
           {/* Content stack - items positioned between front and back */}
           <div className="content-stack">
             {contentItems.map((item, index) => {
-              const style = getItemTransform(index, scrollProgress);
+              const itemY = itemYTransforms[index];
+              
+              // Scale: business card (index 0) is 70% smaller (30% of original size)
+              // Poems (index 4-6) are 20% smaller (80% of original size)
+              let baseScale = 1.0;
+              if (index === 0) {
+                baseScale = 0.3; // Business card: 70% smaller = 30% scale
+              } else if (index >= 4 && index <= 6) {
+                baseScale = 0.8; // Poems: 20% smaller = 80% scale
+              }
+              
               return (
-                <img
+                <motion.img
                   key={index}
                   src={item.src}
                   alt={item.alt}
                   className="content-item"
-                  style={style}
+                  style={{
+                    y: itemY,
+                    scale: baseScale,
+                    x: '-50%',
+                    zIndex: item.zIndex,
+                  }}
                 />
               );
             })}
