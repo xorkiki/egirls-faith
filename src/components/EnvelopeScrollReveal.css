@@ -9,12 +9,12 @@
   z-index: 1;
 }
 
-/* Envelope Container - positioned right above the description text */
-/* Description top is at calc(50vh + 250px) from top = calc(50vh - 250px) from bottom */
-/* Position envelope bottom 20px above description top */
+/* Envelope Container - positioned above the description text */
+/* Description is at bottom: 80px, estimated height ~50px, so description top ≈ 130px */
+/* Position envelope bottom ~150px from bottom (20px spacing above description top) */
 .envelope-container {
   position: fixed;
-  bottom: calc(50vh - 230px); /* 20px above description top (50vh - 250px + 20px = 50vh - 230px) */
+  bottom: calc(80px + 70px); /* 80px (footer height) + 70px = 150px (20px spacing above description) */
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
@@ -176,6 +176,11 @@
   .content-item {
     max-width: 90%;
   }
+
+  /* Mobile mask - solid black box like desktop */
+  .envelope-content-mask {
+    background-color: #000 !important;
+  }
 }
 
 @media (max-width: 480px) {
@@ -195,5 +200,10 @@
 
   .content-item {
     max-width: 90%;
+  }
+
+  /* Mobile mask - solid black box like desktop */
+  .envelope-content-mask {
+    background-color: #000 !important;
   }
 }

@@ -219,12 +219,12 @@
 
 .paper-trail-description {
   position: fixed;
-  top: calc(50% + 250px); /* Position below the centered envelope (50% + envelope height/2 + spacing) */
+  bottom: 80px; /* Position directly above footer (footer is 80px tall) */
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
   max-width: 600px;
-  padding: 20px;
+  padding: 0 20px;
   text-align: center;
   font-size: 14px;
   line-height: 1.6;
