@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import EnvelopeScrollReveal from '../components/EnvelopeScrollReveal';
+import EnvelopeScrollRevealMobile from '../components/EnvelopeScrollRevealMobile';
 import './PaperTrail.css';
 
 const PaperTrail = ({ onClose }) => {
   const [isReady, setIsReady] = useState(false);
+  // Initialize with actual value, not false - device type locked on load
+  const [isMobile] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return window.innerWidth <= 768;
+  });
 
   // Preload image helper - returns Promise that resolves on load or error (never hangs)
   const preloadImage = (src) => {
@@ -71,7 +77,7 @@ const PaperTrail = ({ onClose }) => {
       
       {/* Main content - fades in when ready */}
       <div className={`paper-trail-content-wrapper ${isReady ? 'paper-trail-ready' : ''}`}>
-        <EnvelopeScrollReveal />
+        {isMobile ? <EnvelopeScrollRevealMobile /> : <EnvelopeScrollReveal />}
         <div className="paper-trail-description">
           from the november edition, a small window into what arrives each month.
         </div>
