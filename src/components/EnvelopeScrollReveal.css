@@ -82,12 +82,15 @@
 }
 
 /* Content Mask - hides content below envelope */
+/* Envelope bottom is at calc(80px + 70px) = 150px from bottom */
+/* Mask starts 5px above envelope bottom = 155px from bottom */
+/* Mask extends DOWN to bottom of page (bottom: 0) */
 .envelope-content-mask {
   position: fixed;
-  bottom: 0;
+  top: calc(100vh - 155px) !important; /* Start 5px above envelope bottom (155px from bottom) */
+  bottom: 0; /* Extends down to bottom of viewport, past footer */
   left: 0;
   right: 0;
-  top: calc(50vh + 220px); /* Start 10px above envelope bottom (envelope bottom is at calc(50vh - 230px) from bottom = calc(50vh + 230px) from top, so 10px above = calc(50vh + 220px) from top) */
   background-color: #000 !important;
   padding: 0 !important;
   margin: 0 !important;
@@ -156,7 +159,7 @@
   }
 
   .envelope-container {
-    bottom: calc(50vh - 230px); /* Same calculation as desktop - 20px above description */
+    bottom: calc(80px + 70px); /* Match desktop: 80px (footer) + 70px = 150px (20px spacing above description) */
     transform: translateX(-50%);
     max-width: 600px;
   }
@@ -178,8 +181,12 @@
   }
 
   /* Mobile mask - solid black box like desktop */
+  /* Envelope bottom is at 150px from bottom, mask starts 5px above = 155px from bottom */
+  /* Mask extends DOWN to bottom of page */
   .envelope-content-mask {
     background-color: #000 !important;
+    top: calc(100vh - 155px) !important; /* Start 5px above envelope bottom */
+    bottom: 0 !important; /* Extends down to bottom of viewport */
   }
 }
 
@@ -189,6 +196,7 @@
   }
 
   .envelope-container {
+    bottom: calc(80px + 70px); /* Match desktop: 80px (footer) + 70px = 150px */
     max-width: 90%;
   }
 
@@ -203,7 +211,11 @@
   }
 
   /* Mobile mask - solid black box like desktop */
+  /* Envelope bottom is at 150px from bottom, mask starts 5px above = 155px from bottom */
+  /* Mask extends DOWN to bottom of page */
   .envelope-content-mask {
     background-color: #000 !important;
+    top: calc(100vh - 155px) !important; /* Start 5px above envelope bottom */
+    bottom: 0 !important; /* Extends down to bottom of viewport */
   }
 }
