@@ -10,6 +10,7 @@ const EnvelopeScrollReveal = () => {
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const [envelopeTopOffset, setEnvelopeTopOffset] = useState(400); // Default envelope height estimate
   const [stackHeight, setStackHeight] = useState(600); // Content stack height (varies by screen size)
+  const initialViewportHeightRef = useRef(null); // Cache initial viewport height to avoid iOS address bar issues
 
   // Content items in order (front to back in z-index)
   const contentItems = [
@@ -24,13 +25,24 @@ const EnvelopeScrollReveal = () => {
 
   const totalItems = contentItems.length;
 
-  // Check for reduced motion preference
+  // Check for reduced motion preference and cache initial viewport height
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     setPrefersReducedMotion(mediaQuery.matches);
     
     const handleChange = (e) => setPrefersReducedMotion(e.matches);
     mediaQuery.addEventListener('change', handleChange);
+    
+    // Cache initial viewport height to avoid iOS Safari address bar issues
+    // Use visualViewport API if available (more accurate on mobile), otherwise use innerHeight
+    if (typeof window !== 'undefined') {
+      if (window.visualViewport) {
+        initialViewportHeightRef.current = window.visualViewport.height;
+      } else {
+        initialViewportHeightRef.current = window.innerHeight;
+      }
+    }
+    
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
@@ -207,9 +219,11 @@ const EnvelopeScrollReveal = () => {
     
     // Items scroll upward until they're completely off screen behind header
     // Calculate distance needed: from envelope top to top of viewport (y=0) plus buffer
-    // Envelope container is at bottom: calc(50vh - 230px), so envelope top is roughly at viewport center
-    // Use viewport height as scroll distance to ensure items scroll completely off screen
-    const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : 800;
+    // Use cached initial viewport height to avoid iOS Safari address bar issues
+    // visualViewport API is more accurate on mobile, but fallback to cached initial height
+    const viewportHeight = typeof window !== 'undefined' 
+      ? (window.visualViewport?.height || initialViewportHeightRef.current || window.innerHeight)
+      : 800;
     const scrollOffScreenDistance = viewportHeight + 200; // Enough distance to scroll completely off screen
     
     const translateY = startingOffset - (localProgress * scrollOffScreenDistance);

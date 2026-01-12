@@ -4,7 +4,8 @@
   top: 0;
   left: 0;
   width: 100vw;
-  height: 100vh;
+  height: 100vh; /* Fallback for browsers that don't support dvh */
+  height: 100dvh; /* Use dynamic viewport height on all devices */
   background-color: #000;
   color: #fff;
   font-family: 'Courier New', 'Menlo', 'Monaco', monospace;
@@ -22,7 +23,8 @@
   top: 48px; /* Account for header */
   left: 0;
   width: 100%;
-  height: calc(100vh - 48px);
+  height: calc(100vh - 48px); /* Fallback for browsers that don't support dvh */
+  height: calc(100dvh - 48px); /* Use dynamic viewport height on all devices */
   background-color: #000; /* Match page background */
   z-index: 99; /* Below header (1000) but above content when loading */
 }

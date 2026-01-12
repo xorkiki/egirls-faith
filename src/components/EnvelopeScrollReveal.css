@@ -17,11 +17,14 @@
   bottom: calc(80px + 70px); /* 80px (footer height) + 70px = 150px (20px spacing above description) */
   left: 50%;
   transform: translateX(-50%);
+  -webkit-transform: translateX(-50%) translateZ(0); /* iOS Safari fix: hardware acceleration + new stacking context */
   width: 100%;
   max-width: 600px;
   z-index: 100;
   pointer-events: none;
   touch-action: auto; /* Allow scrolling */
+  padding-top: env(safe-area-inset-top, 0px); /* Safe area for notched devices */
+  padding-bottom: env(safe-area-inset-bottom, 0px); /* Safe area for home indicator */
 }
 
 /* Envelope Layers Container */
@@ -41,6 +44,7 @@
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
+  -webkit-transform: translateX(-50%); /* Safari prefix for compatibility */
   width: 90%;
   max-width: 600px;
   height: auto;
@@ -57,6 +61,7 @@
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
+  -webkit-transform: translateX(-50%); /* Safari prefix for compatibility */
   width: 80%;
   max-width: 500px;
   height: 600px; /* Height for content items to move within */
@@ -87,7 +92,8 @@
 /* Mask extends DOWN to bottom of page (bottom: 0) */
 .envelope-content-mask {
   position: fixed;
-  top: calc(100vh - 155px) !important; /* Start 5px above envelope bottom (155px from bottom) */
+  top: calc(100vh - 155px); /* Fallback for browsers that don't support dvh */
+  top: calc(100dvh - 155px) !important; /* Start 5px above envelope bottom (155px from bottom) */
   bottom: 0; /* Extends down to bottom of viewport, past footer */
   left: 0;
   right: 0;
@@ -98,6 +104,7 @@
   box-sizing: border-box;
   z-index: 101; /* Above envelope-container (100) to be visible */
   pointer-events: none; /* Allow scroll to pass through */
+  -webkit-transform: translateZ(0); /* iOS Safari fix: hardware acceleration + new stacking context */
 }
 
 /* Front Envelope - highest z-index (frontmost) */
@@ -106,6 +113,7 @@
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
+  -webkit-transform: translateX(-50%); /* Safari prefix for compatibility */
   width: 90%;
   max-width: 600px;
   height: auto;
@@ -161,6 +169,7 @@
   .envelope-container {
     bottom: calc(80px + 70px); /* Match desktop: 80px (footer) + 70px = 150px (20px spacing above description) */
     transform: translateX(-50%);
+    -webkit-transform: translateX(-50%) translateZ(0); /* iOS Safari fix */
     max-width: 600px;
   }
 
@@ -185,8 +194,10 @@
   /* Mask extends DOWN to bottom of page */
   .envelope-content-mask {
     background-color: #000 !important;
-    top: calc(100vh - 155px) !important; /* Start 5px above envelope bottom */
+    top: calc(100vh - 155px); /* Fallback for browsers that don't support dvh */
+    top: calc(100dvh - 155px) !important; /* Start 5px above envelope bottom */
     bottom: 0 !important; /* Extends down to bottom of viewport */
+    -webkit-transform: translateZ(0); /* iOS Safari fix */
   }
 }
 
@@ -197,6 +208,8 @@
 
   .envelope-container {
     bottom: calc(80px + 70px); /* Match desktop: 80px (footer) + 70px = 150px */
+    transform: translateX(-50%);
+    -webkit-transform: translateX(-50%) translateZ(0); /* iOS Safari fix */
     max-width: 90%;
   }
 
@@ -215,7 +228,9 @@
   /* Mask extends DOWN to bottom of page */
   .envelope-content-mask {
     background-color: #000 !important;
-    top: calc(100vh - 155px) !important; /* Start 5px above envelope bottom */
+    top: calc(100vh - 155px); /* Fallback for browsers that don't support dvh */
+    top: calc(100dvh - 155px) !important; /* Start 5px above envelope bottom */
     bottom: 0 !important; /* Extends down to bottom of viewport */
+    -webkit-transform: translateZ(0); /* iOS Safari fix */
   }
 }
