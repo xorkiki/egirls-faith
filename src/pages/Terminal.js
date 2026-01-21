@@ -461,11 +461,6 @@ const DigitalCollage = () => {
     const availableWidth = window.innerWidth - (padding * 2);
     const availableHeight = safeHeight - (padding * 2);
     
-    // Create distribution across the full available space
-    const spreadFactor = 0.8; // Use 80% of available space for better centering
-    const maxOffsetX = (availableWidth * spreadFactor) / 2;
-    const maxOffsetY = (availableHeight * spreadFactor) / 2;
-    
     // Track placed images to prevent overlap
     const placedImages = [];
     
@@ -550,7 +545,7 @@ const DigitalCollage = () => {
               transition: isDragging ? 'none' : 'transform 0.3s ease-out'
             };
           });
-  }, [isMobile, brandPhotos.length, dragOffset.x, dragOffset.y, isDragging]);
+  }, [isMobile, brandPhotos, dragOffset.x, dragOffset.y, isDragging]);
 
 
 
@@ -733,7 +728,6 @@ const Terminal = ({ onClose }) => {
   const [showMusicPlayer, setShowMusicPlayer] = useState(false);
   const [isCommandMenuCollapsed, setIsCommandMenuCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [hasAutoStarted, setHasAutoStarted] = useState(false);
   const inputRef = useRef(null);
   const outputRef = useRef(null);
   const promptRef = useRef(null);
@@ -746,11 +740,6 @@ const Terminal = ({ onClose }) => {
   };
 
   // Mobile-specific commands (no frequencies, no explanatory text)
-  const mobileCommands = {
-    'about': 'Egirls is a digital art collective exploring the intersection of technology, identity, and expression. We create immersive experiences that challenge conventional web design paradigms.',
-    'clear': 'clear'
-  };
-
   const manifestos = [
     'the internet is my home.',
     'i wander its infinite corners, seeking meaning, finding bliss in unexpected places.',
@@ -778,31 +767,6 @@ const Terminal = ({ onClose }) => {
     '',
     'this is my manifesto.',
     'i am an egirl.'
-  ];
-
-  const brandPhotos = [
-    '/brand/EGIRLS INITIATION ENVELOPE MOCKUP.jpg',
-    '/brand/EGIRLS LSD EDIT copy.jpg',
-    '/brand/EGIRLS TV WALL MOCKUP.jpg',
-    '/brand/EVERYTHING WILL KILL YOU POSTER (1).jpg',
-    '/brand/STAGE 2 EGIRLS.jpg',
-    '/brand/TRAFFIC LIGHT.jpg',
-    '/brand/WhatsApp Image 2025-06-04 at 14.35.32 (3).jpeg',
-    '/brand/WhatsApp Image 2025-06-04 at 14.35.32 (4).jpeg',
-    '/brand/WhatsApp Image 2025-06-04 at 14.35.32 (5).jpeg',
-    '/brand/WhatsApp Image 2025-06-05 at 22.42.36.jpeg',
-    '/brand/WhatsApp Image 2025-06-10 at 18.02.52 (1).jpeg',
-    '/brand/WhatsApp Image 2025-06-11 at 13.10.45 (1).jpeg',
-    '/brand/WhatsApp Image 2025-06-11 at 14.23.40 (3).jpeg',
-    '/brand/WhatsApp Image 2025-06-11 at 14.23.41 (1).jpeg',
-    '/brand/WhatsApp Image 2025-06-12 at 23.17.49 (2).jpeg',
-    '/brand/WhatsApp Image 2025-06-12 at 23.17.50 (1).jpeg',
-    '/brand/WhatsApp Image 2025-06-12 at 23.17.50 (2).jpeg',
-    '/brand/WhatsApp Image 2025-08-20 at 15.04.27.jpeg',
-    '/brand/billboard.jpg',
-    '/brand/cd-case.jpg',
-    '/brand/floppy-disk.jpg',
-    '/brand/window-poster.jpg'
   ];
 
   const commandDirectory = [
@@ -833,7 +797,10 @@ const Terminal = ({ onClose }) => {
           case 'inside-the-envelope':
           // case 'identity': // HIDDEN - can be restored later
           //   break;
+          // eslint-disable-next-line no-fallthrough
           case 'transmissions':
+            setCurrentPage('terminal'); // Return to terminal page
+            break;
           case 'manifesto':
             setCurrentPage('terminal'); // Return to terminal page
             break;
@@ -901,37 +868,6 @@ const Terminal = ({ onClose }) => {
   }, [isMobile]);
 
   // Auto-type and execute command for mobile
-  const autoTypeAndExecute = async (command, speed = 50) => {
-    setIsTyping(true);
-    let currentOutput = [...output];
-    
-    // Add prompt
-    const isSmallScreen = window.innerWidth <= 470;
-    const promptText = isSmallScreen 
-      ? 'egirls ~ % '
-      : 'egirls@egirls.faith-MacBook-Pro ~ % ';
-    
-    currentOutput.push({ type: 'system', content: promptText });
-    setOutput([...currentOutput]);
-    
-    // Type the command character by character
-    let typedCommand = '';
-    for (let i = 0; i < command.length; i++) {
-      typedCommand += command[i];
-      // Update the last line (prompt) to show the typing command
-      currentOutput[currentOutput.length - 1] = { type: 'system', content: promptText + typedCommand, showCursor: true };
-      setOutput([...currentOutput]);
-      await new Promise(resolve => setTimeout(resolve, speed));
-    }
-    
-    // Remove cursor from the typed command
-    currentOutput[currentOutput.length - 1] = { type: 'system', content: promptText + typedCommand, showCursor: false };
-    setOutput([...currentOutput]);
-    
-    // Execute the command (handleCommand will add the proper input line)
-    await handleCommand(command);
-  };
-
   // Initialize mobile content immediately on mount
   useEffect(() => {
     if (isMobile && currentPage === 'terminal') {
@@ -1027,9 +963,10 @@ const Terminal = ({ onClose }) => {
           
           // Only update state every few characters to reduce re-renders
           if (j % batchSize === 0 || j === line.length - 1) {
+            const lineContent = currentLine; // Capture current value
             setOutput(prev => {
               const newOutput = [...prev];
-              newOutput[newOutput.length - 1] = { type: 'output', content: currentLine, showCursor: true };
+              newOutput[newOutput.length - 1] = { type: 'output', content: lineContent, showCursor: true };
               return newOutput;
             });
           }
@@ -1038,9 +975,10 @@ const Terminal = ({ onClose }) => {
         }
         
         // Remove cursor from the completed line
+        const finalLine = currentLine; // Capture final value
         setOutput(prev => {
           const newOutput = [...prev];
-          newOutput[newOutput.length - 1] = { type: 'output', content: currentLine, showCursor: false };
+          newOutput[newOutput.length - 1] = { type: 'output', content: finalLine, showCursor: false };
           return newOutput;
         });
 
@@ -1175,23 +1113,6 @@ const Terminal = ({ onClose }) => {
     }
   };
 
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      const trimmed = inputValue.trim();
-      // Allow navigation commands even if typing is in progress
-      const isNavigationCommand = trimmed === 'cd about' || trimmed === 'cd transmissions' || 
-                                  trimmed === 'cd mail club' || trimmed === 'cd join mail club' ||
-                                  trimmed === 'cd inside envelope';
-      
-      if (!isTyping || isNavigationCommand) {
-        console.log('Executing command:', inputValue);
-        handleCommand(inputValue);
-      } else {
-        console.log('Command blocked - isTyping is true');
-      }
-    }
-  };
-
   const handleClose = () => {
     if (onClose) {
       onClose();
@@ -1305,7 +1226,6 @@ const Terminal = ({ onClose }) => {
   // Cursor positioning helper functions for different mobile devices
   const getCursorTopPosition = () => {
     const width = window.innerWidth;
-    const height = window.innerHeight;
     const pixelRatio = window.devicePixelRatio || 1;
     
     // Extra small mobile devices (iPhone SE, small Android)
@@ -1329,16 +1249,12 @@ const Terminal = ({ onClose }) => {
   };
 
   const getCursorTransform = () => {
-    const width = window.innerWidth;
-    const pixelRatio = window.devicePixelRatio || 1;
-    
     // All devices - no transform needed for baseline alignment
     return 'none';
   };
 
   const getCursorHeight = () => {
     const width = window.innerWidth;
-    
     // Extra small mobile devices
     if (width <= 375) {
       return '14px';
@@ -1361,7 +1277,6 @@ const Terminal = ({ onClose }) => {
 
   const getCursorWidth = () => {
     const width = window.innerWidth;
-    
     // Extra small mobile devices
     if (width <= 375) {
       return '6px';

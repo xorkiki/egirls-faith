@@ -109,7 +109,7 @@ const DraggableIcon = ({ name, initialX, initialY, onOpen, iconSrc }) => {
         document.removeEventListener('mouseup', handleMouseUp);
       };
     }
-  }, [dragStart, isDragging]);
+  }, [dragStart, isDragging, handleMouseMove]);
 
   return (
     <div
@@ -167,87 +167,6 @@ const Photos = ({ onClose }) => {
     };
   }, [onClose]);
 
-  // Generate random but centered positions for folders with better viewport handling
-  const getRandomCenteredPosition = (folderIndex) => {
-    // Get current viewport dimensions with fallbacks
-    const viewportWidth = window.innerWidth || document.documentElement.clientWidth || 375;
-    const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 667;
-    
-    // Account for header and footer areas
-    const headerHeight = 44; // Header height
-    const footerHeight = 80; // Footer height
-    const availableHeight = viewportHeight - headerHeight - footerHeight;
-    
-    // Use the full viewport width for better distribution
-    const safeZoneWidth = viewportWidth - 100; // Full width minus margins
-    const safeZoneHeight = availableHeight - 100; // Full height minus margins
-    
-    // Distribute folders across the full width to prevent stacking
-    let baseX;
-    if (folderIndex === 0) {
-      // First folder: left side
-      baseX = 100 + (Math.random() * 0.3 * safeZoneWidth);
-    } else {
-      // Second folder: right side
-      baseX = 100 + (0.7 * safeZoneWidth) + (Math.random() * 0.3 * safeZoneWidth);
-    }
-    
-    // Random Y position within available height
-    const randomY = headerHeight + 100 + (Math.random() * (safeZoneHeight - 100));
-    
-    // Ensure folders stay within viewport bounds with better margins
-    const folderWidth = 80; // Approximate folder width
-    const folderHeight = 100; // Approximate folder height
-    
-    const maxX = viewportWidth - folderWidth - 50; // 50px margin from right edge
-    const maxY = viewportHeight - folderHeight - footerHeight - 50; // 50px margin from bottom
-    const minY = headerHeight + 50; // 50px margin below header
-    const minX = 50; // 50px margin from left edge
-    
-    const finalX = Math.max(minX, Math.min(maxX, baseX));
-    const finalY = Math.max(minY, Math.min(maxY, randomY));
-    
-    // Debug: Log the positioning
-    console.log(`Folder ${folderIndex} positioning:`, {
-      viewportWidth,
-      viewportHeight,
-      availableHeight,
-      baseX,
-      randomY,
-      finalX,
-      finalY,
-      minX,
-      maxX,
-      minY,
-      maxY
-    });
-    
-    return {
-      x: finalX,
-      y: finalY
-    };
-  };
-
-  // Fallback positions if random positioning fails
-  const getFallbackPosition = (index) => {
-    const viewportWidth = window.innerWidth || document.documentElement.clientWidth || 375;
-    const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 667;
-    
-    // Account for header and footer areas
-    const headerHeight = 44;
-    const footerHeight = 80;
-    const availableHeight = viewportHeight - headerHeight - footerHeight;
-    
-    // Simple grid-based fallback positioning within available space
-    const gridX = index === 0 ? 0.3 : 0.7; // Left or right side
-    const gridY = 0.5; // Middle of available space
-    
-    return {
-      x: Math.max(20, Math.min(viewportWidth - 100, viewportWidth * gridX)),
-      y: Math.max(headerHeight + 20, Math.min(viewportHeight - footerHeight - 180, headerHeight + (availableHeight * gridY)))
-    };
-  };
-
   // Helper function to check if two positions overlap
   const checkOverlap = (pos1, pos2, minDistance = 120) => {
     const distance = Math.sqrt(Math.pow(pos1.x - pos2.x, 2) + Math.pow(pos1.y - pos2.y, 2));
@@ -257,7 +176,6 @@ const Photos = ({ onClose }) => {
   // Helper function to generate mobile-specific positions (centered vertically, evenly spaced)
   const generateMobilePosition = (index, viewportWidth, viewportHeight, headerHeight, footerHeight) => {
     const iconWidth = 80;
-    const iconHeight = 100;
     const totalIcons = 4;
     
     // Center the icons vertically in the available space
@@ -325,7 +243,7 @@ const Photos = ({ onClose }) => {
       }
     } else {
       // Generate non-overlapping positions for each icon (desktop)
-      for (const iconName of iconNames) {
+      for (let i = 0; i < iconNames.length; i++) {
         const position = generateNonOverlappingPosition(positions, viewportWidth, viewportHeight, headerHeight, footerHeight);
         positions.push(position);
       }
@@ -362,7 +280,7 @@ const Photos = ({ onClose }) => {
         }
       } else {
         // Generate non-overlapping positions for each icon (desktop)
-        for (const iconName of iconNames) {
+        for (let i = 0; i < iconNames.length; i++) {
           const position = generateNonOverlappingPosition(positions, viewportWidth, viewportHeight, headerHeight, footerHeight);
           positions.push(position);
         }
@@ -393,7 +311,7 @@ const Photos = ({ onClose }) => {
       window.removeEventListener('orientationchange', handleResize);
       clearTimeout(timeoutId);
     };
-  }, []);
+  }, [generateNonOverlappingPosition]);
 
   return (
     <div className="photos-page">
