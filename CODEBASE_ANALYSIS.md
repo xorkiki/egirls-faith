@@ -18,7 +18,7 @@ All routes defined in `src/App.js`:
 1. **LandingPage** (`/`) - `src/pages/LandingPage.js`
 2. **Terminal** (`/terminal`) - `src/pages/Terminal.js`
 3. **About** (`/about`) - `src/pages/About.js`
-4. **Transmissions** (`/confession`) - `src/pages/Transmissions.js`
+4. **Transmissions** (`/confessions`) - `src/pages/Transmissions.js`
 5. **Photos/Mail Club** (`/mailclub`) - `src/pages/Photos.js`
 6. **PaperTrail/Inside Envelope** (`/insidetheenvelope`) - `src/pages/PaperTrail.js`
 

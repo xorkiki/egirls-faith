@@ -1094,13 +1094,13 @@ const Terminal = ({ onClose }) => {
         }
         return;
       } else if (trimmedCommand === 'cd transmissions') {
-        console.log('Navigating to /confession');
+        console.log('Navigating to /confessions');
         setInputValue('');
         try {
-          navigate('/confession');
+          navigate('/confessions');
         } catch (err) {
           console.error('Navigation error, using window.location:', err);
-          window.location.href = '/confession';
+          window.location.href = '/confessions';
         }
         return;
       } else if (trimmedCommand === 'cd mail club' || trimmedCommand === 'cd join mail club') {

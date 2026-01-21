@@ -68,7 +68,7 @@ npm run build
 1. **Landing Page** (/): Hero image with scroll-to-reveal that transitions to the terminal
 2. **Terminal** (/terminal): Command-line interface serving as the main navigation hub
 3. **About** (/about): Information about egirls, the publication, and the philosophy
-4. **Transmissions** (/confession): Subscription page with Typeform integration for monthly editions
+4. **Transmissions** (/confessions): Subscription page with Typeform integration for monthly editions
 5. **Mail Club** (/mailclub): Interactive page with draggable desktop icons and notes interface
 6. **Inside the Envelope** (/insidetheenvelope): Scroll-reveal page showing example envelope and letter content
 
