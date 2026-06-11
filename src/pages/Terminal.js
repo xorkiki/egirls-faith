@@ -733,7 +733,7 @@ const Terminal = ({ onClose }) => {
   const promptRef = useRef(null);
 
   const commands = {
-    'help': 'available commands:\n• cd about - navigate to about page\n• cd transmissions - navigate to transmissions page\n• cd join mail club - navigate to join mail club page\n• cd inside envelope - navigate to inside envelope page\n• cd frequencies - toggle music player (desktop only)\n• manifesto.txt - display manifesto in terminal\n• help - show this help\n• clear - clear terminal\n• exit - return to landing page',
+    'help': 'available commands:\n• cd about - navigate to about page\n• cd join mail club - navigate to join mail club page\n• cd inside envelope - navigate to inside envelope page\n• cd frequencies - toggle music player (desktop only)\n• manifesto.txt - display manifesto in terminal\n• help - show this help\n• clear - clear terminal\n• exit - return to landing page',
     'about': 'Egirls is a digital art collective exploring the intersection of technology, identity, and expression. We create immersive experiences that challenge conventional web design paradigms.',
     'clear': 'clear',
     'exit': 'exit'
@@ -771,7 +771,7 @@ const Terminal = ({ onClose }) => {
 
   const commandDirectory = [
     'cd about',
-    'cd transmissions',
+    // 'cd transmissions', // HIDDEN - can be restored later
     'cd join mail club',
     'cd inside envelope',
     // 'cd identity/', // HIDDEN - can be restored later
@@ -798,9 +798,9 @@ const Terminal = ({ onClose }) => {
           // case 'identity': // HIDDEN - can be restored later
           //   break;
           // eslint-disable-next-line no-fallthrough
-          case 'transmissions':
-            setCurrentPage('terminal'); // Return to terminal page
-            break;
+          // case 'transmissions': // HIDDEN - can be restored later
+          //   setCurrentPage('terminal');
+          //   break;
           case 'manifesto':
             setCurrentPage('terminal'); // Return to terminal page
             break;
@@ -873,7 +873,7 @@ const Terminal = ({ onClose }) => {
     if (isMobile && currentPage === 'terminal') {
       // Preload mobile content immediately without any delay
       setOutput([
-        { type: 'output', content: 'available commands:\n• cd about\n• cd transmissions\n• cd join mail club\n• cd inside envelope\n• manifesto.txt\n• clear' }
+        { type: 'output', content: 'available commands:\n• cd about\n• cd join mail club\n• cd inside envelope\n• manifesto.txt\n• clear' }
       ]);
       setCurrentPage('help');
     }
@@ -1031,16 +1031,17 @@ const Terminal = ({ onClose }) => {
           window.location.href = '/about';
         }
         return;
-      } else if (trimmedCommand === 'cd transmissions') {
-        console.log('Navigating to /confessions');
-        setInputValue('');
-        try {
-          navigate('/confessions');
-        } catch (err) {
-          console.error('Navigation error, using window.location:', err);
-          window.location.href = '/confessions';
-        }
-        return;
+      // HIDDEN - transmissions command (can be restored later)
+      // } else if (trimmedCommand === 'cd transmissions') {
+      //   console.log('Navigating to /confessions');
+      //   setInputValue('');
+      //   try {
+      //     navigate('/confessions');
+      //   } catch (err) {
+      //     console.error('Navigation error, using window.location:', err);
+      //     window.location.href = '/confessions';
+      //   }
+      //   return;
       } else if (trimmedCommand === 'cd mail club' || trimmedCommand === 'cd join mail club') {
         console.log('Navigating to /mailclub');
         setInputValue('');
@@ -1078,13 +1079,13 @@ const Terminal = ({ onClose }) => {
         await typeOutText(manifestos.join('\n'), 25);
       } else if (trimmedCommand === 'ls') {
         const lsOutput = isMobile 
-          ? 'about/\ntransmissions/\njoin mail club/\ninside envelope/\nmanifesto.txt'
-          : 'about/\norigins/\nphotos/\ntransmissions/\ninside envelope/\nfrequencies/\nmanifesto.txt';
+          ? 'about/\njoin mail club/\ninside envelope/\nmanifesto.txt'
+          : 'about/\norigins/\nphotos/\ninside envelope/\nfrequencies/\nmanifesto.txt';
         await typeOutText(lsOutput);
       } else if (trimmedCommand === 'help') {
         setCurrentPage('help');
         if (isMobile) {
-          await typeOutText('available commands:\n• cd about\n• cd transmissions\n• cd join mail club\n• cd inside envelope\n• manifesto.txt\n• clear');
+          await typeOutText('available commands:\n• cd about\n• cd join mail club\n• cd inside envelope\n• manifesto.txt\n• clear');
         } else {
           await typeOutText(commands.help);
         }
@@ -1172,25 +1173,26 @@ const Terminal = ({ onClose }) => {
   //   );
   // }
 
-  if (currentPage === 'transmissions') {
-    return (
-      <div className="transmissions-page">
-        <div className="transmissions-header">
-          <div className="terminal-buttons">
-            <div className="terminal-button close" onClick={() => setCurrentPage('terminal')}>
-              <span className="close-icon">×</span>
-            </div>
-            <div className="terminal-button minimize"></div>
-            <div className="terminal-button maximize"></div>
-          </div>
-          <div className="terminal-title">transmissions</div>
-        </div>
-        <div className="transmissions-content">
-          {/* Secret page content - currently blank */}
-        </div>
-      </div>
-    );
-  }
+  // HIDDEN - transmissions page (can be restored later)
+  // if (currentPage === 'transmissions') {
+  //   return (
+  //     <div className="transmissions-page">
+  //       <div className="transmissions-header">
+  //         <div className="terminal-buttons">
+  //           <div className="terminal-button close" onClick={() => setCurrentPage('terminal')}>
+  //             <span className="close-icon">×</span>
+  //           </div>
+  //           <div className="terminal-button minimize"></div>
+  //           <div className="terminal-button maximize"></div>
+  //         </div>
+  //         <div className="terminal-title">transmissions</div>
+  //       </div>
+  //       <div className="transmissions-content">
+  //         {/* Secret page content - currently blank */}
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   if (currentPage === 'manifesto') {
     return (
@@ -1400,7 +1402,7 @@ const Terminal = ({ onClose }) => {
                 if (e.key === 'Enter') {
                   e.preventDefault();
                   const trimmed = inputValue.trim();
-                  const isNavigationCommand = trimmed === 'cd about' || trimmed === 'cd transmissions' || 
+                  const isNavigationCommand = trimmed === 'cd about' ||
                                               trimmed === 'cd mail club' || trimmed === 'cd join mail club' ||
                                               trimmed === 'cd paper trail';
                   
